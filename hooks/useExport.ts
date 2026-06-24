@@ -383,6 +383,14 @@ export const useExport = () => {
           break-after: auto;
           page-break-after: auto;
         }
+
+        /* PagedJS has already split content at .page-break elements into separate
+           .pagedjs_page containers. Neutralize their break-before hint here so the
+           browser print engine does not fire a second break, which produces a blank page. */
+        .page-break, hr.print-page-break {
+          break-before: auto !important;
+          page-break-before: auto !important;
+        }
       `;
 
       hiddenRenderTarget = document.createElement('div');
