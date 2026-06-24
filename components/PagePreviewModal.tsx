@@ -209,7 +209,8 @@ export const PagePreviewModal: React.FC<PagePreviewModalProps> = ({
       .pagedjs_margin-content { font-size: 9pt; }
 
       /* Inlined prose styles — exact match with index.html (PagedJS-safe: no color-mix, no transition) */
-      .prose-preview {
+      /* :is() covers both: .prose-preview wrapper present AND absent (PagedJS places children directly into .pagedjs_page_content) */
+      .prose-preview, .pagedjs_page_content {
         font-family: var(--md-font-family, 'Inter', ui-sans-serif, system-ui, sans-serif);
         font-size: var(--md-font-size, 16px);
         line-height: var(--md-line-height, 1.6);
@@ -220,7 +221,7 @@ export const PagePreviewModal: React.FC<PagePreviewModalProps> = ({
         box-sizing: border-box;
         margin: 0 auto;
       }
-      .prose-preview h1 {
+      :is(.prose-preview, .pagedjs_page_content) h1 {
         font-size: 2em; font-weight: 800;
         margin-bottom: 0.5em; margin-top: 1.2em;
         color: var(--md-heading-color, #1e293b);
@@ -228,7 +229,7 @@ export const PagePreviewModal: React.FC<PagePreviewModalProps> = ({
         border-bottom: 2px solid var(--md-accent-color, #4f46e5);
         padding-bottom: 0.2em;
       }
-      .prose-preview h2 {
+      :is(.prose-preview, .pagedjs_page_content) h2 {
         font-size: 1.5em; font-weight: 700;
         margin-bottom: 0.5em; margin-top: 1.5em;
         color: var(--md-heading-color, #1e293b);
@@ -236,44 +237,44 @@ export const PagePreviewModal: React.FC<PagePreviewModalProps> = ({
         border-bottom: 1px solid #e2e8f0;
         padding-bottom: 0.15em;
       }
-      .prose-preview h3 { font-size: 1.25em; font-weight: 600; margin-bottom: 0.4em; margin-top: 1.3em; color: var(--md-heading-color, #1e293b); }
-      .prose-preview h4 { font-size: 1.1em; font-weight: 600; margin-bottom: 0.3em; margin-top: 1em; color: var(--md-heading-color, #1e293b); }
-      .prose-preview p { margin-bottom: 1em; line-height: var(--md-line-height, 1.6); text-align: var(--md-p-align, left); }
-      .prose-preview a { color: var(--md-accent-color, #4f46e5); text-decoration: underline; text-underline-offset: 2px; }
-      .prose-preview strong { font-weight: 700; }
-      .prose-preview em { font-style: italic; }
+      :is(.prose-preview, .pagedjs_page_content) h3 { font-size: 1.25em; font-weight: 600; margin-bottom: 0.4em; margin-top: 1.3em; color: var(--md-heading-color, #1e293b); }
+      :is(.prose-preview, .pagedjs_page_content) h4 { font-size: 1.1em; font-weight: 600; margin-bottom: 0.3em; margin-top: 1em; color: var(--md-heading-color, #1e293b); }
+      :is(.prose-preview, .pagedjs_page_content) p { margin-bottom: 1em; line-height: var(--md-line-height, 1.6); text-align: var(--md-p-align, left); }
+      :is(.prose-preview, .pagedjs_page_content) a { color: var(--md-accent-color, #4f46e5); text-decoration: underline; text-underline-offset: 2px; }
+      :is(.prose-preview, .pagedjs_page_content) strong { font-weight: 700; }
+      :is(.prose-preview, .pagedjs_page_content) em { font-style: italic; }
 
       /* Lists */
-      .prose-preview ul { list-style-type: disc; margin-left: 1.5em; margin-bottom: 1em; }
-      .prose-preview ol { list-style-type: decimal; margin-left: 1.5em; margin-bottom: 1em; }
-      .prose-preview li { margin-bottom: 0.3em; }
-      .prose-preview li > ul, .prose-preview li > ol { margin-top: 0.3em; margin-bottom: 0; }
+      :is(.prose-preview, .pagedjs_page_content) ul { list-style-type: disc; margin-left: 1.5em; margin-bottom: 1em; }
+      :is(.prose-preview, .pagedjs_page_content) ol { list-style-type: decimal; margin-left: 1.5em; margin-bottom: 1em; }
+      :is(.prose-preview, .pagedjs_page_content) li { margin-bottom: 0.3em; }
+      :is(.prose-preview, .pagedjs_page_content) li > ul, :is(.prose-preview, .pagedjs_page_content) li > ol { margin-top: 0.3em; margin-bottom: 0; }
 
       /* Task Lists */
-      .prose-preview input[type="checkbox"] { width: 1.15em; height: 1.15em; border: 2px solid #94a3b8; border-radius: 4px; margin-top: 0.2em; margin-right: 0.5em; }
+      :is(.prose-preview, .pagedjs_page_content) input[type="checkbox"] { width: 1.15em; height: 1.15em; border: 2px solid #94a3b8; border-radius: 4px; margin-top: 0.2em; margin-right: 0.5em; }
 
       /* Blockquotes */
-      .prose-preview blockquote { border-left: 4px solid #cbd5e1; padding: 0.5em 1em; color: #64748b; font-style: italic; margin: 1em 0; background: #f8fafc; border-radius: 0 8px 8px 0; }
-      .prose-preview blockquote > p:last-child { margin-bottom: 0; }
+      :is(.prose-preview, .pagedjs_page_content) blockquote { border-left: 4px solid #cbd5e1; padding: 0.5em 1em; color: #64748b; font-style: italic; margin: 1em 0; background: #f8fafc; border-radius: 0 8px 8px 0; }
+      :is(.prose-preview, .pagedjs_page_content) blockquote > p:last-child { margin-bottom: 0; }
 
       /* Code */
-      .prose-preview code { background-color: var(--md-code-bg, #f6f8fa); padding: 0.15em 0.4em; border-radius: 5px; font-family: 'Fira Code', 'JetBrains Mono', ui-monospace, monospace; font-size: 0.875em; border: 1px solid #e2e8f0; }
-      .prose-preview pre { background-color: var(--md-code-bg, #f6f8fa); padding: 1em 1.25em; border-radius: 10px; overflow-x: auto; margin-bottom: 1.25em; border: 1px solid #e2e8f0; }
-      .prose-preview pre code { background-color: transparent; padding: 0; border: none; font-size: 0.9em; }
+      :is(.prose-preview, .pagedjs_page_content) code { background-color: var(--md-code-bg, #f6f8fa); padding: 0.15em 0.4em; border-radius: 5px; font-family: 'Fira Code', 'JetBrains Mono', ui-monospace, monospace; font-size: 0.875em; border: 1px solid #e2e8f0; }
+      :is(.prose-preview, .pagedjs_page_content) pre { background-color: var(--md-code-bg, #f6f8fa); padding: 1em 1.25em; border-radius: 10px; overflow-x: auto; margin-bottom: 1.25em; border: 1px solid #e2e8f0; }
+      :is(.prose-preview, .pagedjs_page_content) pre code { background-color: transparent; padding: 0; border: none; font-size: 0.9em; }
 
       /* Tables */
-      .prose-preview table { border-collapse: separate; border-spacing: 0; width: 100%; margin: 1.25em 0; border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; }
-      .prose-preview th, .prose-preview td { border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; padding: 10px 14px; text-align: left; }
-      .prose-preview th:last-child, .prose-preview td:last-child { border-right: none; }
-      .prose-preview tr:last-child td { border-bottom: none; }
-      .prose-preview th { background: linear-gradient(to bottom, #f1f5f9, #e2e8f0); font-weight: 600; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.03em; color: #475569; }
-      .prose-preview tr:nth-child(even) td { background-color: #fafbfc; }
+      :is(.prose-preview, .pagedjs_page_content) table { border-collapse: separate; border-spacing: 0; width: 100%; margin: 1.25em 0; border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; }
+      :is(.prose-preview, .pagedjs_page_content) th, :is(.prose-preview, .pagedjs_page_content) td { border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; padding: 10px 14px; text-align: left; }
+      :is(.prose-preview, .pagedjs_page_content) th:last-child, :is(.prose-preview, .pagedjs_page_content) td:last-child { border-right: none; }
+      :is(.prose-preview, .pagedjs_page_content) tr:last-child td { border-bottom: none; }
+      :is(.prose-preview, .pagedjs_page_content) th { background: linear-gradient(to bottom, #f1f5f9, #e2e8f0); font-weight: 600; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.03em; color: #475569; }
+      :is(.prose-preview, .pagedjs_page_content) tr:nth-child(even) td { background-color: #fafbfc; }
 
       /* Horizontal Rule */
-      .prose-preview hr { border: none; height: 3px; background: var(--md-accent-color, #4f46e5); margin: 2em 0; border-radius: 2px; opacity: 0.5; }
+      :is(.prose-preview, .pagedjs_page_content) hr { border: none; height: 3px; background: var(--md-accent-color, #4f46e5); margin: 2em 0; border-radius: 2px; opacity: 0.5; }
 
       /* Images */
-      .prose-preview img { max-width: 100%; height: auto; border-radius: 10px; margin: 1.5em auto; display: block; }
+      :is(.prose-preview, .pagedjs_page_content) img { max-width: 100%; height: auto; border-radius: 10px; margin: 1.5em auto; display: block; }
 
       /* Page Break */
       .page-break, hr.print-page-break { break-before: page; page-break-before: always; height: 0; margin: 0; padding: 0; border: none; visibility: hidden; }
