@@ -84,11 +84,11 @@
       }
 
       .prose-preview a {
-        color: var(--md-accent-color, #4f46e5);
+        color: var(--md-link-color, var(--md-accent-color, #4f46e5));
         text-decoration: underline;
         text-decoration-color: color-mix(
           in srgb,
-          var(--md-accent-color, #4f46e5) 40%,
+          var(--md-link-color, var(--md-accent-color, #4f46e5)) 40%,
           transparent
         );
         text-underline-offset: 2px;
@@ -96,7 +96,7 @@
       }
 
       .prose-preview a:hover {
-        text-decoration-color: var(--md-accent-color, #4f46e5);
+        text-decoration-color: var(--md-link-color, var(--md-accent-color, #4f46e5));
       }
 
       .prose-preview strong {
@@ -206,6 +206,7 @@
        =========================== */
       .prose-preview code {
         background-color: var(--md-code-bg, #f6f8fa);
+        color: var(--md-code-color, inherit);
         padding: 0.15em 0.4em;
         border-radius: 5px;
         font-family: "Fira Code", "JetBrains Mono", ui-monospace, monospace;
@@ -385,7 +386,7 @@
       .callout-content {
         padding: 0.75em 1em;
         font-size: 0.95em;
-        color: #475569;
+        color: var(--md-callout-text-color, #475569);
       }
 
       .callout-content > p:last-child {

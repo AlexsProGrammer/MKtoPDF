@@ -185,7 +185,10 @@ export const useExport = () => {
       const h3Color = settings.h3Color || headingColor;
       const h4Color = settings.h4Color || headingColor;
       const accentColor = settings.accentColor || '#4f46e5';
+      const linkColor = settings.linkColor || accentColor;
       const codeBg = settings.codeBgColor || '#f6f8fa';
+      const codeTextColor = settings.codeTextColor || 'inherit';
+      const calloutTextColor = settings.calloutTextColor || '#475569';
       const pAlign = settings.paragraphAlign || 'left';
       const bgColor = settings.backgroundColor || '#ffffff';
       const tableBorder = settings.tableBorderColor || '#e2e8f0';
@@ -279,7 +282,7 @@ export const useExport = () => {
         :is(.prose-preview, .pagedjs_page_content) h3 { font-size: 1.25em; font-weight: 600; font-family: ${headingFontFamily}; margin-bottom: 0.4em; margin-top: 1.3em; color: ${h3Color}; }
         :is(.prose-preview, .pagedjs_page_content) h4 { font-size: 1.1em; font-weight: 600; font-family: ${headingFontFamily}; margin-bottom: 0.3em; margin-top: 1em; color: ${h4Color}; }
         :is(.prose-preview, .pagedjs_page_content) p { margin-bottom: 1em; line-height: ${lineHeight}; text-align: ${pAlign}; }
-        :is(.prose-preview, .pagedjs_page_content) a { color: ${accentColor}; text-decoration: underline; text-underline-offset: 2px; }
+        :is(.prose-preview, .pagedjs_page_content) a { color: ${linkColor}; text-decoration: underline; text-underline-offset: 2px; }
         :is(.prose-preview, .pagedjs_page_content) strong { font-weight: 700; }
         :is(.prose-preview, .pagedjs_page_content) em { font-style: italic; }
 
@@ -298,7 +301,7 @@ export const useExport = () => {
         :is(.prose-preview, .pagedjs_page_content) blockquote > p:last-child { margin-bottom: 0; }
 
         /* Code */
-        :is(.prose-preview, .pagedjs_page_content) code { background-color: ${codeBg}; padding: 0.15em 0.4em; border-radius: 5px; font-family: 'Fira Code', 'JetBrains Mono', ui-monospace, monospace; font-size: 0.875em; border: 1px solid #e2e8f0; }
+        :is(.prose-preview, .pagedjs_page_content) code { background-color: ${codeBg}; color: ${codeTextColor}; padding: 0.15em 0.4em; border-radius: 5px; font-family: 'Fira Code', 'JetBrains Mono', ui-monospace, monospace; font-size: 0.875em; border: 1px solid #e2e8f0; }
         :is(.prose-preview, .pagedjs_page_content) pre { background-color: ${codeBg}; padding: 1em 1.25em; border-radius: 10px; overflow-x: auto; margin-bottom: 1.25em; border: 1px solid #e2e8f0; }
         :is(.prose-preview, .pagedjs_page_content) pre code { background-color: transparent; padding: 0; border: none; font-size: 0.9em; }
 
@@ -324,7 +327,7 @@ export const useExport = () => {
         .callout-title { display: flex; align-items: center; gap: 0.5em; padding: 0.65em 1em; font-weight: 700; font-size: 0.95em; color: #448aff; background: rgba(68, 138, 255, 0.1); border-bottom: 1px solid rgba(68, 138, 255, 0.15); }
         .callout-icon { font-size: 1.1em; flex-shrink: 0; }
         .callout-title-text { flex: 1; }
-        .callout-content { padding: 0.75em 1em; font-size: 0.95em; color: #475569; }
+        .callout-content { padding: 0.75em 1em; font-size: 0.95em; color: ${calloutTextColor}; }
         .callout-content > p:last-child { margin-bottom: 0; }
         .callout-content > p:first-child { margin-top: 0; }
         .callout-content ul, .callout-content ol { margin-left: 1.2em; margin-bottom: 0.5em; }

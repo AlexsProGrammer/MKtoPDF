@@ -244,7 +244,7 @@ export const PagePreviewModal: React.FC<PagePreviewModalProps> = ({
       :is(.prose-preview, .pagedjs_page_content) h3 { font-size: 1.25em; font-weight: 600; font-family: var(--md-heading-font-family, var(--md-font-family)); margin-bottom: 0.4em; margin-top: 1.3em; color: var(--md-h3-color, var(--md-heading-color, #1e293b)); }
       :is(.prose-preview, .pagedjs_page_content) h4 { font-size: 1.1em; font-weight: 600; font-family: var(--md-heading-font-family, var(--md-font-family)); margin-bottom: 0.3em; margin-top: 1em; color: var(--md-h4-color, var(--md-heading-color, #1e293b)); }
       :is(.prose-preview, .pagedjs_page_content) p { margin-bottom: 1em; line-height: var(--md-line-height, 1.6); text-align: var(--md-p-align, left); }
-      :is(.prose-preview, .pagedjs_page_content) a { color: var(--md-accent-color, #4f46e5); text-decoration: underline; text-underline-offset: 2px; }
+      :is(.prose-preview, .pagedjs_page_content) a { color: var(--md-link-color, var(--md-accent-color, #4f46e5)); text-decoration: underline; text-underline-offset: 2px; }
       :is(.prose-preview, .pagedjs_page_content) strong { font-weight: 700; }
       :is(.prose-preview, .pagedjs_page_content) em { font-style: italic; }
 
@@ -262,7 +262,7 @@ export const PagePreviewModal: React.FC<PagePreviewModalProps> = ({
       :is(.prose-preview, .pagedjs_page_content) blockquote > p:last-child { margin-bottom: 0; }
 
       /* Code */
-      :is(.prose-preview, .pagedjs_page_content) code { background-color: var(--md-code-bg, #f6f8fa); padding: 0.15em 0.4em; border-radius: 5px; font-family: 'Fira Code', 'JetBrains Mono', ui-monospace, monospace; font-size: 0.875em; border: 1px solid #e2e8f0; }
+      :is(.prose-preview, .pagedjs_page_content) code { background-color: var(--md-code-bg, #f6f8fa); color: var(--md-code-color, inherit); padding: 0.15em 0.4em; border-radius: 5px; font-family: 'Fira Code', 'JetBrains Mono', ui-monospace, monospace; font-size: 0.875em; border: 1px solid #e2e8f0; }
       :is(.prose-preview, .pagedjs_page_content) pre { background-color: var(--md-code-bg, #f6f8fa); padding: 1em 1.25em; border-radius: 10px; overflow-x: auto; margin-bottom: 1.25em; border: 1px solid #e2e8f0; }
       :is(.prose-preview, .pagedjs_page_content) pre code { background-color: transparent; padding: 0; border: none; font-size: 0.9em; }
 
@@ -288,7 +288,7 @@ export const PagePreviewModal: React.FC<PagePreviewModalProps> = ({
       .callout-title { display: flex; align-items: center; gap: 0.5em; padding: 0.65em 1em; font-weight: 700; font-size: 0.95em; color: #448aff; background: rgba(68, 138, 255, 0.1); border-bottom: 1px solid rgba(68, 138, 255, 0.15); }
       .callout-icon { font-size: 1.1em; flex-shrink: 0; }
       .callout-title-text { flex: 1; }
-      .callout-content { padding: 0.75em 1em; font-size: 0.95em; color: #475569; }
+      .callout-content { padding: 0.75em 1em; font-size: 0.95em; color: var(--md-callout-text-color, #475569); }
       .callout-content > p:last-child { margin-bottom: 0; }
       .callout-content > p:first-child { margin-top: 0; }
       .callout-content ul, .callout-content ol { margin-left: 1.2em; margin-bottom: 0.5em; }

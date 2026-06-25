@@ -400,6 +400,12 @@ export const StylesModal: React.FC<StylesModalProps> = ({
                                         onChange={(v) => update({ paragraphColor: v })}
                                         placeholder="inherit"
                                     />
+                                    <ColorInput
+                                        label="Link Color"
+                                        value={localSettings.linkColor}
+                                        onChange={(v) => update({ linkColor: v })}
+                                        placeholder="accent color"
+                                    />
                                 </div>
                             </div>
 
@@ -415,6 +421,12 @@ export const StylesModal: React.FC<StylesModalProps> = ({
                                         label="Code Background"
                                         value={localSettings.codeBgColor}
                                         onChange={(v) => update({ codeBgColor: v })}
+                                    />
+                                    <ColorInput
+                                        label="Code Text"
+                                        value={localSettings.codeTextColor}
+                                        onChange={(v) => update({ codeTextColor: v })}
+                                        placeholder="inherit"
                                     />
                                 </div>
                             </div>
@@ -449,6 +461,13 @@ export const StylesModal: React.FC<StylesModalProps> = ({
 
                     {activeTab === 'callouts' && (
                         <div className="space-y-3">
+                            <div className="pb-3 border-b border-gray-100">
+                                <ColorInput
+                                    label="Callout Text Color"
+                                    value={localSettings.calloutTextColor}
+                                    onChange={(v) => update({ calloutTextColor: v })}
+                                />
+                            </div>
                             <p className="text-xs text-gray-500 mb-2">
                                 Customize the accent color for each callout type. Click reset to use the default.
                             </p>

@@ -25,6 +25,7 @@ export interface StyleSettings {
     paragraphColor: string;
     backgroundColor: string;
     codeBgColor: string;
+    codeTextColor: string;
 
     // Table colors
     tableBorderColor: string;
@@ -48,6 +49,10 @@ export interface StyleSettings {
     // Custom uploaded fonts
     customFonts: CustomFont[];
 
+    // Text extras
+    linkColor: string;
+    calloutTextColor: string;
+
     // Callout overrides (optional per-type color overrides)
     calloutColors: Partial<Record<string, string>>;
 }
@@ -67,6 +72,7 @@ export const DEFAULT_STYLE_SETTINGS: StyleSettings = {
     paragraphColor: '',
     backgroundColor: '#ffffff',
     codeBgColor: '#f6f8fa',
+    codeTextColor: '',
     tableBorderColor: '#e2e8f0',
     tableHeaderBg: '#f1f5f9',
     tableHeaderColor: '#475569',
@@ -80,6 +86,8 @@ export const DEFAULT_STYLE_SETTINGS: StyleSettings = {
     footerCenter: '',
     footerRight: '',
     headerFooterColor: '#64748b',
+    linkColor: '',
+    calloutTextColor: '#475569',
     customFonts: [],
     calloutColors: {},
 };
@@ -133,6 +141,9 @@ export function stylesToCSSVars(settings: StyleSettings): Record<string, string>
         '--md-p-color': settings.paragraphColor || settings.textColor,
         '--md-bg-color': settings.backgroundColor,
         '--md-code-bg': settings.codeBgColor,
+        '--md-code-color': settings.codeTextColor || 'inherit',
+        '--md-link-color': settings.linkColor || settings.accentColor,
+        '--md-callout-text-color': settings.calloutTextColor || '#475569',
         '--md-table-border': settings.tableBorderColor || '#e2e8f0',
         '--md-table-header-bg': settings.tableHeaderBg || '#f1f5f9',
         '--md-table-header-color': settings.tableHeaderColor || '#475569',
