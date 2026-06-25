@@ -356,14 +356,14 @@ export const useExport = () => {
         html, body {
           margin: 0;
           padding: 0;
-          background: white;
+          background: ${bgColor};
         }
 
         .print-root {
           width: ${geometry.pageWidthMm}mm;
           min-width: ${geometry.pageWidthMm}mm;
           margin: 0 auto;
-          background: white;
+          background: ${bgColor};
         }
 
         .pagedjs_pages {
