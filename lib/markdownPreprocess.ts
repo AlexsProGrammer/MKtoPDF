@@ -126,20 +126,22 @@ function buildWorksheetHtml(type: WsType, n: number): string {
     );
   }
 
-  // grid (Karo-Muster): horizontal lines via border-bottom (always prints),
-  // vertical lines via background-image in X direction only (background-size width=mm,
-  // height=100% of each row — no mm/px cross-axis math, safe for print).
-  const gridRowStyle =
-    `height:var(--ws-grid-size, 5mm); box-sizing:border-box; ` +
-    `border-bottom:1px solid var(--ws-grid-color, #cccccc); ` +
-    `background-image:linear-gradient(to right, var(--ws-grid-color, #cccccc) 0, var(--ws-grid-color, #cccccc) 1px, transparent 1px); ` +
-    `background-size:var(--ws-grid-size, 5mm) 100%; background-repeat:repeat-x;`;
-  const gridLastStyle =
-    `height:var(--ws-grid-size, 5mm); box-sizing:border-box; ` +
-    `background-image:linear-gradient(to right, var(--ws-grid-color, #cccccc) 0, var(--ws-grid-color, #cccccc) 1px, transparent 1px); ` +
-    `background-size:var(--ws-grid-size, 5mm) 100%; background-repeat:repeat-x;`;
+  // grid (Karo-Muster): 100% border-based rendering — no background-image at all.
+  // Chromium's PDF/print renderer fails to correctly tile background gradients
+  // regardless of the technique (background-size, repeating-linear-gradient, px values).
+  // Borders are part of the box model and always render correctly in every context.
+  //
+  // Structure: each row is a flex container.
+  //   border-bottom on rows → horizontal lines (last row skipped, avoids double border)
+  //   border-right on cols  → vertical lines
+  //   overflow:hidden       → clips the 100 pre-generated columns to the visible width
+  //
+  // 100 cols × var(--ws-grid-size, 5mm) ≥ 500mm; covers any standard paper size.
+  const COL = `<div style="width:var(--ws-grid-size, 5mm); flex-shrink:0; height:100%; border-right:1px solid var(--ws-grid-color, #cccccc);"></div>`;
+  const COLS = COL.repeat(100);
+  const rowBase = `display:flex; overflow:hidden; box-sizing:border-box; height:var(--ws-grid-size, 5mm);`;
   const gridRows = Array.from({ length: n }, (_, i) =>
-    `<div style="${i === n - 1 ? gridLastStyle : gridRowStyle}"></div>`
+    `<div class="md-ws-grid-row" style="${rowBase}${i === n - 1 ? '' : ' border-bottom:1px solid var(--ws-grid-color, #cccccc);'}">${COLS}</div>`
   ).join('');
   return (
     `<div class="md-ws-grid" style="${shared} ` +

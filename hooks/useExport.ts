@@ -208,6 +208,9 @@ export const useExport = () => {
         maxContentWidthPx: settings.maxContentWidth,
       });
 
+      const wsGridSizeMm = settings.worksheetGridSizeMm ?? 5;
+      const wsGridColor  = settings.worksheetGridColor  || '#cccccc';
+
       const pagedStyles = `
         ${buildFontFaceRules(settings.customFonts)}
 
@@ -225,6 +228,18 @@ export const useExport = () => {
         }
 
         .md-ws-space, .md-ws-lines, .md-ws-grid { display: block; break-inside: avoid; page-break-inside: avoid; }
+
+        /* Karo-Muster — column divs carry border-right for vertical lines. No
+           background-image at all; borders always render correctly in PDF/print.
+           Override CSS-variable widths with concrete mm values so the PDF renderer
+           doesn't need to resolve any custom properties for layout. */
+        .md-ws-grid-row { display: flex !important; overflow: hidden !important; }
+        .md-ws-grid-row > div {
+          width: ${wsGridSizeMm}mm !important;
+          min-width: ${wsGridSizeMm}mm !important;
+          flex: 0 0 ${wsGridSizeMm}mm !important;
+          border-right-color: ${wsGridColor} !important;
+        }
 
         .pagedjs_page {
           background-color: ${bgColor};
