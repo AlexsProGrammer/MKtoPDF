@@ -6,6 +6,7 @@
 - **Image Upload / Manage**: Allow reupload not found images, uses same url/id
 - **Editor Toolbar**: impl empty spaces, lines, Karo-Muster for Work Tasks
 - **Editor Toolbar**: Added line break
+- **Editor Toolbar**: Added Portrait/Landscape dropdown select; also added settings to style settings; default is Portrait
 
 
 ## [0.6.7] - 2026-06-25

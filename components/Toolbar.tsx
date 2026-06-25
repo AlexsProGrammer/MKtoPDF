@@ -23,6 +23,8 @@ interface ToolbarProps {
   onFontUploaded?: (font: CustomFont) => void;
   wordWrap?: boolean;
   onToggleWordWrap?: () => void;
+  orientation?: 'portrait' | 'landscape';
+  onOrientationChange?: (o: 'portrait' | 'landscape') => void;
 }
 
 const FONT_OPTIONS = [
@@ -62,7 +64,7 @@ const Portal: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return ReactDOM.createPortal(children, document.body);
 };
 
-export const Toolbar: React.FC<ToolbarProps> = ({ editorView, onOpenImageManager, customFonts, onFontUploaded, wordWrap, onToggleWordWrap }) => {
+export const Toolbar: React.FC<ToolbarProps> = ({ editorView, onOpenImageManager, customFonts, onFontUploaded, wordWrap, onToggleWordWrap, orientation, onOrientationChange }) => {
   // Use unique keys for dropdown management
   // null = no dropdown open
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -494,11 +496,20 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editorView, onOpenImageManager
 
         <Separator />
 
-        {/* Word Wrap / Page Break / Line Break */}
+        {/* Orientation / Word Wrap / Page Break / Line Break */}
         <div className="flex items-center gap-0.5 px-0.5">
-           <IconButton icon={WrapText} onClick={() => onToggleWordWrap?.()} title={wordWrap ? 'Disable Word Wrap' : 'Enable Word Wrap'} active={wordWrap} />
-           <IconButton icon={FileText} onClick={insertPageBreak} title="Insert Page Break" />
-           <IconButton icon={CornerDownRight} onClick={insertLineBreak} title="Insert Line Break" />
+          <select
+            value={orientation ?? 'portrait'}
+            onChange={(e) => onOrientationChange?.(e.target.value as 'portrait' | 'landscape')}
+            title="Page Orientation"
+            className="text-xs font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 border-0 rounded-md px-1.5 py-1 outline-none cursor-pointer transition-colors"
+          >
+            <option value="portrait">Portrait</option>
+            <option value="landscape">Landscape</option>
+          </select>
+          <IconButton icon={WrapText} onClick={() => onToggleWordWrap?.()} title={wordWrap ? 'Disable Word Wrap' : 'Enable Word Wrap'} active={wordWrap} />
+          <IconButton icon={FileText} onClick={insertPageBreak} title="Insert Page Break" />
+          <IconButton icon={CornerDownRight} onClick={insertLineBreak} title="Insert Line Break" />
         </div>
 
         <Separator />

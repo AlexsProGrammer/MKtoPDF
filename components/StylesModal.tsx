@@ -186,6 +186,7 @@ function applyPartialReset(current: StyleSettings, sections: Set<ResetSectionId>
     if (sections.has('layout')) {
         next.maxContentWidth = d.maxContentWidth;
         next.paragraphAlign = d.paragraphAlign;
+        next.orientation = d.orientation;
     }
     if (sections.has('headerFooter')) {
         next.headerLeft = d.headerLeft; next.headerCenter = d.headerCenter; next.headerRight = d.headerRight;
@@ -679,6 +680,25 @@ export const StylesModal: React.FC<StylesModalProps> = ({
 
                     {activeTab === 'layout' && (
                         <div className="space-y-5">
+                            <div className="space-y-2">
+                                <label className="text-sm text-gray-600 font-medium">Page Orientation</label>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {(['portrait', 'landscape'] as const).map((o) => (
+                                        <button
+                                            key={o}
+                                            onClick={() => update({ orientation: o })}
+                                            className={clsx(
+                                                'px-3 py-2.5 rounded-xl text-sm font-medium border-2 transition-all capitalize',
+                                                localSettings.orientation === o
+                                                    ? 'border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm'
+                                                    : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                                            )}
+                                        >
+                                            {o}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
                             <SliderInput
                                 label="Max Content Width"
                                 value={localSettings.maxContentWidth}

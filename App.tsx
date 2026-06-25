@@ -330,7 +330,20 @@ const App: React.FC = () => {
     };
   }, [markdownInput, processOnMainThread]);
 
-  const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
+  const orientation = styleSettings.orientation ?? 'portrait';
+
+  // Inject @page size rule so the browser's native Ctrl+P print dialog
+  // respects the currently selected orientation.
+  useEffect(() => {
+    const styleId = 'mktopdf-print-orientation';
+    let el = document.getElementById(styleId) as HTMLStyleElement | null;
+    if (!el) {
+      el = document.createElement('style');
+      el.id = styleId;
+      document.head.appendChild(el);
+    }
+    el.textContent = `@media print { @page { size: A4 ${orientation}; } }`;
+  }, [orientation]);
 
   const sessionImageMap = useMemo(
     () => Object.fromEntries(sessionImages.map((img) => [img.id, img.objectUrl])),
@@ -597,17 +610,6 @@ const App: React.FC = () => {
               <RefreshCw size={16} />
             </button>
 
-            <div className="flex items-center bg-gray-100 rounded-lg p-1 ml-2">
-              <select
-                className="bg-transparent text-xs font-medium text-gray-600 outline-none px-2 py-1 cursor-pointer"
-                value={orientation}
-                onChange={(e) => setOrientation(e.target.value as 'portrait' | 'landscape')}
-              >
-                <option value="portrait">Portrait</option>
-                <option value="landscape">Landscape</option>
-              </select>
-            </div>
-
             <button
               onClick={handleExport}
               disabled={isExporting}
@@ -646,6 +648,8 @@ const App: React.FC = () => {
               }
               wordWrap={wordWrap}
               onToggleWordWrap={() => setWordWrap((v) => !v)}
+              orientation={orientation}
+              onOrientationChange={(o) => setStyleSettings((prev) => ({ ...DEFAULT_STYLE_SETTINGS, ...prev, orientation: o }))}
             />
 
             <div className="flex-1 overflow-hidden">

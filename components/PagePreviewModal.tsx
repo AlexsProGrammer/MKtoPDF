@@ -57,7 +57,16 @@ export const PagePreviewModal: React.FC<PagePreviewModalProps> = ({
   
   const [isRendering, setIsRendering] = useState(false);
   const [orientation, setOrientation] = useState<'portrait' | 'landscape'>(initialOrientation);
-  
+
+  // Ref updated synchronously on every render so renderPreview always reads
+  // the current orientation at call-time, not a stale closure value captured
+  // when the setTimeout was created. This prevents the race where the sync
+  // effect (setOrientation) and the render effect both fire on modal open:
+  // the 50 ms timer would otherwise fire with the old orientation before
+  // React's re-render can cancel it.
+  const renderOrientationRef = useRef<'portrait' | 'landscape'>(initialOrientation);
+  renderOrientationRef.current = orientation;  // inline — runs before any effect
+
   const settings = styleSettings || DEFAULT_STYLE_SETTINGS;
 
   const debugEnabled = (() => {
@@ -160,10 +169,10 @@ export const PagePreviewModal: React.FC<PagePreviewModalProps> = ({
       .map(([key, val]) => `${key}: ${val};`)
       .join('\n');
     const hasHeaderOrFooter = hasCustomHeaderFooter(settings);
-    const geometry = getPreviewPageGeometry(orientation, hasHeaderOrFooter);
+    const geometry = getPreviewPageGeometry(renderOrientationRef.current, hasHeaderOrFooter);
     debugLog('preview geometry', {
       runId,
-      orientation,
+      orientation: renderOrientationRef.current,
       hasHeaderOrFooter,
       marginMm: geometry.marginMm,
       contentWidthMm: geometry.contentWidthMm,
@@ -173,7 +182,7 @@ export const PagePreviewModal: React.FC<PagePreviewModalProps> = ({
     const pageRules = `
       ${buildFontFaceRules(settings.customFonts)}
 
-      ${buildPageRules(settings, orientation, { marginMm: geometry.marginMm, docName: docTitle })}
+      ${buildPageRules(settings, renderOrientationRef.current, { marginMm: geometry.marginMm, docName: docTitle })}
 
       :root {
         --md-export-content-width: ${geometry.contentWidthMm}mm;

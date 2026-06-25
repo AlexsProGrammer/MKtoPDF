@@ -36,6 +36,7 @@ export interface StyleSettings {
     // Layout
     maxContentWidth: number; // in px (600-1200)
     paragraphAlign: 'left' | 'justify';
+    orientation: 'portrait' | 'landscape';
 
     // Header & Footer
     headerLeft: string;
@@ -87,6 +88,7 @@ export const DEFAULT_STYLE_SETTINGS: StyleSettings = {
     tableStripeColor: '#fafbfc',
     maxContentWidth: 900,
     paragraphAlign: 'left',
+    orientation: 'portrait',
     headerLeft: '',
     headerCenter: '',
     headerRight: '',
