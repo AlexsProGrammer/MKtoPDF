@@ -54,21 +54,26 @@ describe('markdownPreprocess worksheet elements', () => {
   it('converts :::lines[5]::: to a ruled-lines div', () => {
     const out = preprocessMarkdown(':::lines[5]:::');
     expect(out).toContain('class="md-ws-lines"');
-    expect(out).toContain('calc(5 * var(--ws-line-height');
-    expect(out).toContain('repeating-linear-gradient');
+    expect(out).toContain('height:var(--ws-line-height, 7mm)');
+    expect(out).toContain('border-bottom');
+    // Should produce exactly 5 row divs
+    expect((out.match(/height:var\(--ws-line-height/g) ?? []).length).toBe(5);
   });
 
   it('converts :::grid[4]::: to a grid div', () => {
     const out = preprocessMarkdown(':::grid[4]:::');
     expect(out).toContain('class="md-ws-grid"');
-    expect(out).toContain('calc(4 * var(--ws-grid-size');
+    expect(out).toContain('height:var(--ws-grid-size, 5mm)');
+    // Should produce exactly 4 row divs
+    expect((out.match(/height:var\(--ws-grid-size/g) ?? []).length).toBe(4);
   });
 
   it('merges consecutive same-type worksheet blocks into one', () => {
     const out = preprocessMarkdown(':::lines[3]:::\n:::lines[2]:::');
-    expect(out).toContain('calc(5 * var(--ws-line-height');
-    // Should produce exactly one element
+    // Merged: exactly one outer element
     expect((out.match(/md-ws-lines/g) ?? []).length).toBe(1);
+    // Merged: 5 row divs total (3+2)
+    expect((out.match(/height:var\(--ws-line-height/g) ?? []).length).toBe(5);
   });
 
   it('does not merge different worksheet types', () => {

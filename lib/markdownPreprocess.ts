@@ -96,7 +96,7 @@ export function preprocessMarkdown(markdown: string): string {
 }
 
 function buildWorksheetHtml(type: WsType, n: number): string {
-  const shared = 'width:100%; box-sizing:border-box; display:block;';
+  const shared = 'width:100%; box-sizing:border-box; display:block; break-inside:avoid; page-break-inside:avoid;';
 
   if (type === 'space') {
     return (
@@ -109,38 +109,42 @@ function buildWorksheetHtml(type: WsType, n: number): string {
   }
 
   if (type === 'lines') {
+    // Use N stacked border-bottom divs instead of background-image gradients.
+    // Borders always print reliably; background gradients can be dropped by the
+    // browser's print renderer due to mm/px DPI scaling and "print backgrounds"
+    // settings. Each row gets border-bottom except the last (avoids double border
+    // with the outer container).
+    const lineStyle = `height:var(--ws-line-height, 7mm); box-sizing:border-box; border-bottom:1px solid var(--ws-line-color, #aaaaaa);`;
+    const lastStyle = `height:var(--ws-line-height, 7mm); box-sizing:border-box;`;
+    const rows = Array.from({ length: n }, (_, i) =>
+      `<div style="${i === n - 1 ? lastStyle : lineStyle}"></div>`
+    ).join('');
     return (
       `<div class="md-ws-lines" style="${shared} ` +
-      `height:calc(${n} * var(--ws-line-height, 7mm)); ` +
       `border:1px solid var(--ws-border-color, #bbbbbb); ` +
-      `background-color:#ffffff; ` +
-      `background-image:repeating-linear-gradient(` +
-        `to bottom, ` +
-        `transparent 0, transparent calc(var(--ws-line-height, 7mm) - 1px), ` +
-        `var(--ws-line-color, #aaaaaa) calc(var(--ws-line-height, 7mm) - 1px), ` +
-        `var(--ws-line-color, #aaaaaa) var(--ws-line-height, 7mm)` +
-      `);"></div>`
+      `background-color:#ffffff;">${rows}</div>`
     );
   }
 
-  // grid (Karo-Muster)
+  // grid (Karo-Muster): horizontal lines via border-bottom (always prints),
+  // vertical lines via background-image in X direction only (background-size width=mm,
+  // height=100% of each row — no mm/px cross-axis math, safe for print).
+  const gridRowStyle =
+    `height:var(--ws-grid-size, 5mm); box-sizing:border-box; ` +
+    `border-bottom:1px solid var(--ws-grid-color, #cccccc); ` +
+    `background-image:linear-gradient(to right, var(--ws-grid-color, #cccccc) 0, var(--ws-grid-color, #cccccc) 1px, transparent 1px); ` +
+    `background-size:var(--ws-grid-size, 5mm) 100%; background-repeat:repeat-x;`;
+  const gridLastStyle =
+    `height:var(--ws-grid-size, 5mm); box-sizing:border-box; ` +
+    `background-image:linear-gradient(to right, var(--ws-grid-color, #cccccc) 0, var(--ws-grid-color, #cccccc) 1px, transparent 1px); ` +
+    `background-size:var(--ws-grid-size, 5mm) 100%; background-repeat:repeat-x;`;
+  const gridRows = Array.from({ length: n }, (_, i) =>
+    `<div style="${i === n - 1 ? gridLastStyle : gridRowStyle}"></div>`
+  ).join('');
   return (
     `<div class="md-ws-grid" style="${shared} ` +
-    `height:calc(${n} * var(--ws-grid-size, 5mm)); ` +
     `border:1px solid var(--ws-border-color, #bbbbbb); ` +
-    `background-color:#ffffff; ` +
-    `background-image:` +
-      `repeating-linear-gradient(` +
-        `to right, ` +
-        `var(--ws-grid-color, #cccccc) 0, var(--ws-grid-color, #cccccc) 1px, ` +
-        `transparent 1px, transparent var(--ws-grid-size, 5mm)` +
-      `), ` +
-      `repeating-linear-gradient(` +
-        `to bottom, ` +
-        `var(--ws-grid-color, #cccccc) 0, var(--ws-grid-color, #cccccc) 1px, ` +
-        `transparent 1px, transparent var(--ws-grid-size, 5mm)` +
-      `); ` +
-    `background-size:var(--ws-grid-size, 5mm) var(--ws-grid-size, 5mm);"></div>`
+    `background-color:#ffffff;">${gridRows}</div>`
   );
 }
 

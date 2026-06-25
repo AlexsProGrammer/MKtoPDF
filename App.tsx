@@ -143,7 +143,7 @@ const App: React.FC = () => {
       `  --ws-border-color: ${styleSettings.worksheetBorderColor || '#bbbbbb'};`,
       `  --ws-space-border-style: ${styleSettings.worksheetSpaceBorder || 'dashed'};`,
       '}',
-      '.md-ws-space, .md-ws-lines, .md-ws-grid { display: block; }',
+      '.md-ws-space, .md-ws-lines, .md-ws-grid { display: block; break-inside: avoid; page-break-inside: avoid; }',
     ].join('\n');
   }, [
     styleSettings.worksheetLineHeightMm,

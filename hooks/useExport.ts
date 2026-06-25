@@ -224,7 +224,7 @@ export const useExport = () => {
           --ws-space-border-style: ${settings.worksheetSpaceBorder || 'dashed'};
         }
 
-        .md-ws-space, .md-ws-lines, .md-ws-grid { display: block; }
+        .md-ws-space, .md-ws-lines, .md-ws-grid { display: block; break-inside: avoid; page-break-inside: avoid; }
 
         .pagedjs_page {
           background-color: ${bgColor};
