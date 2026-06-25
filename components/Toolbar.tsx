@@ -8,7 +8,7 @@ import {
   AlignLeft, AlignCenter, AlignRight, AlignJustify,
   Undo2, Redo2, Table, Palette,
   Type, Superscript, Subscript, FileText,
-  Paintbrush, ChevronDown, Upload, WrapText
+  Paintbrush, ChevronDown, Upload, WrapText, Grid3x3, Square
 } from 'lucide-react';
 import clsx from 'clsx';
 import { EditorView } from '@codemirror/view';
@@ -305,6 +305,19 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editorView, onOpenImageManager
     editorView.focus();
   };
 
+  const insertWorksheetElement = (type: 'space' | 'lines' | 'grid') => {
+    if (!editorView) return;
+    const state = editorView.state;
+    const line = state.doc.lineAt(state.selection.main.from);
+    const insert = `\n:::${type}[5]:::\n`;
+    editorView.dispatch(state.update({
+      changes: { from: line.to, insert },
+      selection: { anchor: line.to + insert.length },
+    }));
+    editorView.focus();
+    setActiveDropdown(null);
+  };
+
   const handleUndo = () => { if (editorView) { undo(editorView); editorView.focus(); } };
   const handleRedo = () => { if (editorView) { redo(editorView); editorView.focus(); } };
 
@@ -473,6 +486,19 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editorView, onOpenImageManager
            <IconButton icon={WrapText} onClick={() => onToggleWordWrap?.()} title={wordWrap ? 'Disable Word Wrap' : 'Enable Word Wrap'} active={wordWrap} />
            <IconButton icon={FileText} onClick={insertPageBreak} title="Insert Page Break" />
         </div>
+
+        <Separator />
+
+        {/* Worksheet elements */}
+        <div className="flex items-center gap-0.5 px-0.5">
+          <IconButton
+            icon={Grid3x3}
+            onClick={() => toggleDropdown('worksheet')}
+            title="Insert Worksheet Element"
+            dropdownKey="worksheet"
+            active={activeDropdown === 'worksheet'}
+          />
+        </div>
       </div>
 
       {/* Render Dropdowns via Portal */}
@@ -584,6 +610,44 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editorView, onOpenImageManager
                   Apply
                 </button>
               </div>
+            )}
+
+            {activeDropdown === 'worksheet' && (
+              <>
+                <div className="px-3 pt-2 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wide border-b border-gray-100">
+                  Worksheet Elements
+                </div>
+                <button
+                  onClick={() => insertWorksheetElement('space')}
+                  className="flex items-center gap-2.5 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700"
+                >
+                  <Square size={13} className="flex-shrink-0 text-gray-400" />
+                  <div>
+                    <div className="text-xs font-medium">Leerer Platz</div>
+                    <div className="text-xs text-gray-400">Empty space</div>
+                  </div>
+                </button>
+                <button
+                  onClick={() => insertWorksheetElement('lines')}
+                  className="flex items-center gap-2.5 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700"
+                >
+                  <AlignJustify size={13} className="flex-shrink-0 text-gray-400" />
+                  <div>
+                    <div className="text-xs font-medium">Zeilen</div>
+                    <div className="text-xs text-gray-400">Ruled lines</div>
+                  </div>
+                </button>
+                <button
+                  onClick={() => insertWorksheetElement('grid')}
+                  className="flex items-center gap-2.5 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700"
+                >
+                  <Grid3x3 size={13} className="flex-shrink-0 text-gray-400" />
+                  <div>
+                    <div className="text-xs font-medium">Karo-Muster</div>
+                    <div className="text-xs text-gray-400">Graph paper grid</div>
+                  </div>
+                </button>
+              </>
             )}
 
           </div>

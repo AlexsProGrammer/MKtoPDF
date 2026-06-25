@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, RotateCcw, Palette, Type, Layout, MessageSquare, FileText, Upload, Trash2 } from 'lucide-react';
+import { X, RotateCcw, Palette, Type, Layout, MessageSquare, FileText, Upload, Trash2, Grid3x3 } from 'lucide-react';
 import { StyleSettings, DEFAULT_STYLE_SETTINGS, CALLOUT_TYPES, CustomFont } from '../lib/styleSettings';
 import clsx from 'clsx';
 
@@ -10,7 +10,7 @@ interface StylesModalProps {
     onSettingsChange: (settings: StyleSettings) => void;
 }
 
-type TabId = 'typography' | 'colors' | 'callouts' | 'layout' | 'export';
+type TabId = 'typography' | 'colors' | 'callouts' | 'layout' | 'export' | 'worksheet';
 
 const TABS: { id: TabId; label: string; icon: React.FC<any> }[] = [
     { id: 'typography', label: 'Typography', icon: Type },
@@ -18,6 +18,7 @@ const TABS: { id: TabId; label: string; icon: React.FC<any> }[] = [
     { id: 'callouts', label: 'Callouts', icon: MessageSquare },
     { id: 'layout', label: 'Layout', icon: Layout },
     { id: 'export', label: 'Header & Footer', icon: FileText },
+    { id: 'worksheet', label: 'Worksheet', icon: Grid3x3 },
 ];
 
 const ColorInput: React.FC<{
@@ -144,7 +145,7 @@ const FontDropdown: React.FC<{
 // Reset-confirm modal
 // ---------------------------------------------------------------------------
 
-type ResetSectionId = 'typography' | 'colors' | 'callouts' | 'layout' | 'headerFooter' | 'customFonts';
+type ResetSectionId = 'typography' | 'colors' | 'callouts' | 'layout' | 'headerFooter' | 'customFonts' | 'worksheet';
 
 const RESET_SECTIONS: { id: ResetSectionId; label: string; desc: string }[] = [
     { id: 'typography',   label: 'Typography',     desc: 'Fonts, font size, line height' },
@@ -153,6 +154,7 @@ const RESET_SECTIONS: { id: ResetSectionId; label: string; desc: string }[] = [
     { id: 'layout',       label: 'Layout',          desc: 'Content width and paragraph alignment' },
     { id: 'headerFooter', label: 'Header & Footer', desc: 'Header/footer content and color' },
     { id: 'customFonts',  label: 'Custom Fonts',    desc: 'Remove all uploaded custom fonts' },
+    { id: 'worksheet',    label: 'Worksheet',        desc: 'Worksheet element sizes, border and colors' },
 ];
 
 function applyPartialReset(current: StyleSettings, sections: Set<ResetSectionId>): StyleSettings {
@@ -194,6 +196,14 @@ function applyPartialReset(current: StyleSettings, sections: Set<ResetSectionId>
         next.customFonts = [];
         if (!BUILT_IN_FONTS.some((f) => f.key === next.fontFamily)) next.fontFamily = d.fontFamily;
         if (!BUILT_IN_FONTS.some((f) => f.key === next.headingFontFamily)) next.headingFontFamily = d.headingFontFamily;
+    }
+    if (sections.has('worksheet')) {
+        next.worksheetLineHeightMm = d.worksheetLineHeightMm;
+        next.worksheetGridSizeMm = d.worksheetGridSizeMm;
+        next.worksheetSpaceBorder = d.worksheetSpaceBorder;
+        next.worksheetLineColor = d.worksheetLineColor;
+        next.worksheetGridColor = d.worksheetGridColor;
+        next.worksheetBorderColor = d.worksheetBorderColor;
     }
     return next;
 }
@@ -696,6 +706,66 @@ export const StylesModal: React.FC<StylesModalProps> = ({
                                         </button>
                                     ))}
                                 </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'worksheet' && (
+                        <div className="space-y-5">
+                            <SliderInput
+                                label="Line Row Height"
+                                value={localSettings.worksheetLineHeightMm}
+                                min={4}
+                                max={15}
+                                step={0.5}
+                                unit="mm"
+                                onChange={(v) => update({ worksheetLineHeightMm: v })}
+                            />
+                            <SliderInput
+                                label="Grid Cell Size (Karo)"
+                                value={localSettings.worksheetGridSizeMm}
+                                min={3}
+                                max={15}
+                                step={0.5}
+                                unit="mm"
+                                onChange={(v) => update({ worksheetGridSizeMm: v })}
+                            />
+                            <div className="space-y-2">
+                                <label className="text-sm text-gray-600 font-medium">Empty Space Border</label>
+                                <div className="grid grid-cols-3 gap-2">
+                                    {(['none', 'dashed', 'solid'] as const).map((style) => (
+                                        <button
+                                            key={style}
+                                            onClick={() => update({ worksheetSpaceBorder: style })}
+                                            className={clsx(
+                                                'px-3 py-2 rounded-xl text-sm font-medium border-2 transition-all capitalize',
+                                                localSettings.worksheetSpaceBorder === style
+                                                    ? 'border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm'
+                                                    : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                                            )}
+                                        >
+                                            {style === 'none' ? 'None' : style === 'dashed' ? 'Dashed' : 'Solid'}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="border-t border-gray-100 pt-4 space-y-3">
+                                <h3 className="text-sm font-semibold text-gray-700">Colors</h3>
+                                <ColorInput
+                                    label="Line Color (Zeilen)"
+                                    value={localSettings.worksheetLineColor}
+                                    onChange={(v) => update({ worksheetLineColor: v })}
+                                />
+                                <ColorInput
+                                    label="Grid Color (Karo)"
+                                    value={localSettings.worksheetGridColor}
+                                    onChange={(v) => update({ worksheetGridColor: v })}
+                                />
+                                <ColorInput
+                                    label="Border Color"
+                                    value={localSettings.worksheetBorderColor}
+                                    onChange={(v) => update({ worksheetBorderColor: v })}
+                                />
                             </div>
                         </div>
                     )}

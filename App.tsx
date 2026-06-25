@@ -125,6 +125,35 @@ const App: React.FC = () => {
     el.textContent = rules;
   }, [styleSettings.customFonts]);
 
+  // Inject worksheet CSS custom properties for the live preview
+  useEffect(() => {
+    const styleId = 'mktopdf-worksheet-vars';
+    let el = document.getElementById(styleId) as HTMLStyleElement | null;
+    if (!el) {
+      el = document.createElement('style');
+      el.id = styleId;
+      document.head.appendChild(el);
+    }
+    el.textContent = [
+      ':root {',
+      `  --ws-line-height: ${styleSettings.worksheetLineHeightMm ?? 7}mm;`,
+      `  --ws-grid-size: ${styleSettings.worksheetGridSizeMm ?? 5}mm;`,
+      `  --ws-line-color: ${styleSettings.worksheetLineColor || '#aaaaaa'};`,
+      `  --ws-grid-color: ${styleSettings.worksheetGridColor || '#cccccc'};`,
+      `  --ws-border-color: ${styleSettings.worksheetBorderColor || '#bbbbbb'};`,
+      `  --ws-space-border-style: ${styleSettings.worksheetSpaceBorder || 'dashed'};`,
+      '}',
+      '.md-ws-space, .md-ws-lines, .md-ws-grid { display: block; }',
+    ].join('\n');
+  }, [
+    styleSettings.worksheetLineHeightMm,
+    styleSettings.worksheetGridSizeMm,
+    styleSettings.worksheetLineColor,
+    styleSettings.worksheetGridColor,
+    styleSettings.worksheetBorderColor,
+    styleSettings.worksheetSpaceBorder,
+  ]);
+
   const [htmlOutput, setHtmlOutput] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [editorView, setEditorView] = useState<EditorView | null>(null);
@@ -459,7 +488,7 @@ const App: React.FC = () => {
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 flex-shrink-0">
               MKtoPDF
             </span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 flex-shrink-0">v0.6.7</span>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 flex-shrink-0">v0.6.8</span>
             
             <div className="h-6 w-px bg-gray-300 mx-2 flex-shrink-0"></div>
             

@@ -55,6 +55,14 @@ export interface StyleSettings {
 
     // Callout overrides (optional per-type color overrides)
     calloutColors: Partial<Record<string, string>>;
+
+    // Worksheet fill-in elements
+    worksheetLineHeightMm: number;                          // height per ruled line in mm
+    worksheetGridSizeMm: number;                            // grid cell size in mm
+    worksheetSpaceBorder: 'none' | 'dashed' | 'solid';     // empty-space border style
+    worksheetLineColor: string;                             // color for ruled lines
+    worksheetGridColor: string;                             // color for grid (Karo) lines
+    worksheetBorderColor: string;                           // color for outer border
 }
 
 export const DEFAULT_STYLE_SETTINGS: StyleSettings = {
@@ -90,6 +98,12 @@ export const DEFAULT_STYLE_SETTINGS: StyleSettings = {
     calloutTextColor: '#475569',
     customFonts: [],
     calloutColors: {},
+    worksheetLineHeightMm: 7,
+    worksheetGridSizeMm: 5,
+    worksheetSpaceBorder: 'dashed',
+    worksheetLineColor: '#aaaaaa',
+    worksheetGridColor: '#cccccc',
+    worksheetBorderColor: '#bbbbbb',
 };
 
 const FONT_FAMILIES: Record<string, string> = {

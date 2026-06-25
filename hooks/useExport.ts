@@ -216,7 +216,15 @@ export const useExport = () => {
         :root {
           --md-export-content-width: ${geometry.contentWidthMm}mm;
           --md-export-content-height: ${geometry.contentHeightMm}mm;
+          --ws-line-height: ${settings.worksheetLineHeightMm ?? 7}mm;
+          --ws-grid-size: ${settings.worksheetGridSizeMm ?? 5}mm;
+          --ws-line-color: ${settings.worksheetLineColor || '#aaaaaa'};
+          --ws-grid-color: ${settings.worksheetGridColor || '#cccccc'};
+          --ws-border-color: ${settings.worksheetBorderColor || '#bbbbbb'};
+          --ws-space-border-style: ${settings.worksheetSpaceBorder || 'dashed'};
         }
+
+        .md-ws-space, .md-ws-lines, .md-ws-grid { display: block; }
 
         .pagedjs_page {
           background-color: ${bgColor};
