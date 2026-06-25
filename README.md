@@ -16,6 +16,14 @@ MKtoPDF is a high-performance, privacy-focused Markdown editor and PDF export en
 -   **🌐 Offline Ready**: Completely self-contained. No external CDNs required for core functionality.
 -   **🎨 Robust Styling**: Modern, clean UI built with Tailwind CSS.
 
+### Important: Set in Print Screen:
+- Margins: None
+- Scale: Fit to Page width
+- Print headers and footers: Deactivated
+- Print backgrounds (optional): Activated
+- Destination (optional): Save as PDF
+
+
 ## Getting Started
 
 ### Prerequisites

@@ -8,7 +8,7 @@
 - fix content after page break in browser print
 
 ### Added
-- style settings: add own font families
+- style settings: add own font families; text color for code, callouts and links
 - browser print screen: set default margins=None and deactivate "print headers and footers"
 
 

@@ -364,6 +364,15 @@ export const useExport = () => {
       `;
 
       const printFrameStyles = `
+        /* Override @page margin to 0 so Chrome defaults to "None" margins in the
+           print dialog and suppresses the browser's native headers/footers.
+           PagedJS has already baked our margins into the .pagedjs_page layout,
+           so the browser needs to add nothing extra. */
+        @page {
+          margin: 0;
+          size: A4 ${orientation};
+        }
+
         html, body {
           margin: 0;
           padding: 0;
