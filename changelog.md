@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.6.8] - 2026-06-25
+
+### Added
+- **Image Upload / Manage**: Allow reupload not found images, uses same url/id
+
+
 ## [0.6.7] - 2026-06-25
 
 ### Fixed

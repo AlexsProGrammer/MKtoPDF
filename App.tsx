@@ -21,6 +21,7 @@ import { toast } from 'sonner';
 import {
   SessionImageAsset,
   createSessionImageAsset,
+  createSessionImageAssetWithId,
   validateImageFile,
   buildInternalImageUrl,
   restoreImagesFromStorage,
@@ -350,6 +351,17 @@ const App: React.FC = () => {
     toast.success('Image removed from session');
   }, []);
 
+  const handleRestoreImage = useCallback(async (id: string, file: File) => {
+    const validationError = validateImageFile(file);
+    if (validationError) { toast.error(validationError); return; }
+    const asset = await createSessionImageAssetWithId(id, file);
+    setSessionImages((current) => [
+      asset,
+      ...current.filter((img) => img.id !== id),
+    ]);
+    toast.success(`Restored "${file.name}"`);
+  }, []);
+
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem(IMAGE_STORAGE_KEY);
@@ -437,6 +449,8 @@ const App: React.FC = () => {
           onUploadFile={handleUploadFile}
           onInsertImage={insertImageMarkdown}
           onDeleteImage={handleDeleteImage}
+          markdownContent={markdownInput}
+          onRestoreImage={handleRestoreImage}
         />
 
         {/* Header */}

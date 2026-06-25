@@ -105,6 +105,31 @@ export async function createSessionImageAsset(file: File): Promise<SessionImageA
   };
 }
 
+/** Create an asset with a specific ID — used when restoring an image that was referenced by a saved mkimg:// link. */
+export async function createSessionImageAssetWithId(id: string, file: File): Promise<SessionImageAsset> {
+  const dataUrl = await fileToDataUrl(file);
+  return {
+    id,
+    name: file.name,
+    mimeType: file.type,
+    size: file.size,
+    createdAt: Date.now(),
+    objectUrl: dataUrl,
+  };
+}
+
+/** Return the set of unique mkimg IDs referenced anywhere in the given markdown string. */
+export function extractMkimgIds(markdownText: string): string[] {
+  const ids = new Set<string>();
+  // Match mkimg:// followed by UUID characters (handles browser URL normalization)
+  const pattern = /mkimg:\/+([a-zA-Z0-9_\-]+)/g;
+  let m: RegExpExecArray | null;
+  while ((m = pattern.exec(markdownText)) !== null) {
+    ids.add(m[1]);
+  }
+  return Array.from(ids);
+}
+
 export function serializeImagesForStorage(images: SessionImageAsset[]): StoredImageAsset[] {
   return images
     .filter((img) => img.objectUrl.startsWith('data:'))
