@@ -13,7 +13,7 @@ import { parseMarkdown } from './lib/markdownParser';
 import { useExport } from './hooks/useExport';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { ViewMode } from './types';
-import { StyleSettings, DEFAULT_STYLE_SETTINGS } from './lib/styleSettings';
+import { StyleSettings, DEFAULT_STYLE_SETTINGS, buildFontFaceRules } from './lib/styleSettings';
 import { Printer, Save, RefreshCw, Palette, Edit2, Link as LinkIcon, Unlink, FileText, Ruler } from 'lucide-react';
 import clsx from 'clsx';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -100,10 +100,28 @@ const App: React.FC = () => {
   // Persistence using localStorage
   const [markdownInput, setMarkdownInput] = useLocalStorage<string>('MD_DRAFT_BUFFER', DEFAULT_MARKDOWN);
   const [viewMode, setViewMode] = useLocalStorage<ViewMode>('MD_VIEW_MODE', 'split');
-  const [styleSettings, setStyleSettings] = useLocalStorage<StyleSettings>('MD_STYLE_SETTINGS', DEFAULT_STYLE_SETTINGS);
+  const [storedStyleSettings, setStyleSettings] = useLocalStorage<StyleSettings>('MD_STYLE_SETTINGS', DEFAULT_STYLE_SETTINGS);
+  // Merge with defaults so that settings saved before new fields were added always have them
+  const styleSettings = useMemo<StyleSettings>(
+    () => ({ ...DEFAULT_STYLE_SETTINGS, ...storedStyleSettings }),
+    [storedStyleSettings]
+  );
   const [documentTitle, setDocumentTitle] = useLocalStorage<string>('MD_DOC_TITLE', 'Untitled Document');
   const [isSyncScrollEnabled, setIsSyncScrollEnabled] = useLocalStorage<boolean>('MD_SYNC_SCROLL', true);
   const [showPageBreakLines, setShowPageBreakLines] = useState(false);
+
+  // Inject custom @font-face rules into the document so custom fonts work in the live preview
+  useEffect(() => {
+    const styleId = 'mktopdf-custom-font-faces';
+    let el = document.getElementById(styleId) as HTMLStyleElement | null;
+    const rules = buildFontFaceRules(styleSettings.customFonts ?? []);
+    if (!el) {
+      el = document.createElement('style');
+      el.id = styleId;
+      document.head.appendChild(el);
+    }
+    el.textContent = rules;
+  }, [styleSettings.customFonts]);
 
   const [htmlOutput, setHtmlOutput] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState<boolean>(false);

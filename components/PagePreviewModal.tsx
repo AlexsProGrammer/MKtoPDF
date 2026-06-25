@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { X, FileText, Check } from 'lucide-react';
-import { StyleSettings, stylesToCSSVars, DEFAULT_STYLE_SETTINGS } from '../lib/styleSettings';
+import { StyleSettings, stylesToCSSVars, DEFAULT_STYLE_SETTINGS, buildFontFaceRules } from '../lib/styleSettings';
 import { buildPageRules, hasCustomHeaderFooter } from '../lib/headerFooter';
 import { postProcessHtml } from '../lib/markdownEngine';
 import { Previewer } from 'pagedjs';
@@ -169,6 +169,8 @@ export const PagePreviewModal: React.FC<PagePreviewModalProps> = ({
     });
 
     const pageRules = `
+      ${buildFontFaceRules(settings.customFonts)}
+
       ${buildPageRules(settings, orientation, { marginMm: geometry.marginMm })}
 
       :root {
@@ -177,7 +179,7 @@ export const PagePreviewModal: React.FC<PagePreviewModalProps> = ({
 
       /* Essential PagedJS Styles */
       .pagedjs_page {
-        background-color: white;
+        background-color: ${settings.backgroundColor || '#ffffff'};
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         margin-bottom: 2rem;
         flex: none;
@@ -223,6 +225,7 @@ export const PagePreviewModal: React.FC<PagePreviewModalProps> = ({
       }
       :is(.prose-preview, .pagedjs_page_content) h1 {
         font-size: 2em; font-weight: 800;
+        font-family: var(--md-heading-font-family, var(--md-font-family));
         margin-bottom: 0.5em; margin-top: 1.2em;
         color: var(--md-heading-color, #1e293b);
         letter-spacing: -0.02em;
@@ -231,14 +234,15 @@ export const PagePreviewModal: React.FC<PagePreviewModalProps> = ({
       }
       :is(.prose-preview, .pagedjs_page_content) h2 {
         font-size: 1.5em; font-weight: 700;
+        font-family: var(--md-heading-font-family, var(--md-font-family));
         margin-bottom: 0.5em; margin-top: 1.5em;
         color: var(--md-heading-color, #1e293b);
         letter-spacing: -0.01em;
         border-bottom: 1px solid #e2e8f0;
         padding-bottom: 0.15em;
       }
-      :is(.prose-preview, .pagedjs_page_content) h3 { font-size: 1.25em; font-weight: 600; margin-bottom: 0.4em; margin-top: 1.3em; color: var(--md-heading-color, #1e293b); }
-      :is(.prose-preview, .pagedjs_page_content) h4 { font-size: 1.1em; font-weight: 600; margin-bottom: 0.3em; margin-top: 1em; color: var(--md-heading-color, #1e293b); }
+      :is(.prose-preview, .pagedjs_page_content) h3 { font-size: 1.25em; font-weight: 600; font-family: var(--md-heading-font-family, var(--md-font-family)); margin-bottom: 0.4em; margin-top: 1.3em; color: var(--md-heading-color, #1e293b); }
+      :is(.prose-preview, .pagedjs_page_content) h4 { font-size: 1.1em; font-weight: 600; font-family: var(--md-heading-font-family, var(--md-font-family)); margin-bottom: 0.3em; margin-top: 1em; color: var(--md-heading-color, #1e293b); }
       :is(.prose-preview, .pagedjs_page_content) p { margin-bottom: 1em; line-height: var(--md-line-height, 1.6); text-align: var(--md-p-align, left); }
       :is(.prose-preview, .pagedjs_page_content) a { color: var(--md-accent-color, #4f46e5); text-decoration: underline; text-underline-offset: 2px; }
       :is(.prose-preview, .pagedjs_page_content) strong { font-weight: 700; }

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { X, RotateCcw, Palette, Type, Layout, MessageSquare, FileText } from 'lucide-react';
-import { StyleSettings, DEFAULT_STYLE_SETTINGS, CALLOUT_TYPES } from '../lib/styleSettings';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, RotateCcw, Palette, Type, Layout, MessageSquare, FileText, Upload, Trash2 } from 'lucide-react';
+import { StyleSettings, DEFAULT_STYLE_SETTINGS, CALLOUT_TYPES, CustomFont } from '../lib/styleSettings';
 import clsx from 'clsx';
 
 interface StylesModalProps {
@@ -93,36 +93,107 @@ const TextInput: React.FC<{
     </div>
 );
 
-const FontSelector: React.FC<{
+const FontDropdown: React.FC<{
     label: string;
     value: string;
-    onChange: (v: 'sans' | 'serif' | 'mono') => void;
-}> = ({ label, value, onChange }) => (
-    <div className="space-y-2">
-        <label className="text-sm text-gray-600 font-medium">{label}</label>
-        <div className="grid grid-cols-3 gap-2">
-            {(['sans', 'serif', 'mono'] as const).map((f) => (
-                <button
-                    key={f}
-                    onClick={() => onChange(f)}
-                    className={clsx(
-                        'px-3 py-2.5 rounded-xl text-sm font-medium border-2 transition-all',
-                        value === f
-                            ? 'border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm'
-                            : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-                    )}
+    customFonts: CustomFont[];
+    onChange: (v: string) => void;
+    onAddFont: (font: CustomFont) => void;
+    onRemoveFont: (name: string) => void;
+}> = ({ label, value, customFonts, onChange, onAddFont, onRemoveFont }) => {
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        // Derive a clean font name from the filename (strip extension)
+        const name = file.name.replace(/\.[^.]+$/, '');
+        const reader = new FileReader();
+        reader.onload = () => {
+            onAddFont({ name, dataUrl: reader.result as string });
+            onChange(name);
+        };
+        reader.readAsDataURL(file);
+        // Reset so the same file can be re-selected
+        e.target.value = '';
+    };
+
+    const BUILT_IN_FONTS = [
+        { key: 'sans', label: 'Sans Serif', style: 'Inter, sans-serif' },
+        { key: 'serif', label: 'Serif', style: 'Georgia, serif' },
+        { key: 'mono', label: 'Monospace', style: 'Fira Code, monospace' },
+    ];
+
+    return (
+        <div className="space-y-2">
+            <label className="text-sm text-gray-600 font-medium">{label}</label>
+            <div className="flex gap-2">
+                <select
+                    value={value}
+                    onChange={(e) => onChange(e.target.value)}
+                    className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
                     style={{
-                        fontFamily: f === 'sans' ? 'Inter, sans-serif'
-                            : f === 'serif' ? 'Georgia, serif'
-                                : 'Fira Code, monospace'
+                        fontFamily: BUILT_IN_FONTS.find((f) => f.key === value)?.style
+                            ?? (customFonts.find((f) => f.name === value) ? `"${value}", sans-serif` : undefined),
                     }}
                 >
-                    {f === 'sans' ? 'Sans Serif' : f === 'serif' ? 'Serif' : 'Monospace'}
+                    {BUILT_IN_FONTS.map((f) => (
+                        <option key={f.key} value={f.key} style={{ fontFamily: f.style }}>
+                            {f.label}
+                        </option>
+                    ))}
+                    {customFonts.length > 0 && (
+                        <optgroup label="Custom Fonts">
+                            {customFonts.map((f) => (
+                                <option key={f.name} value={f.name}>
+                                    {f.name}
+                                </option>
+                            ))}
+                        </optgroup>
+                    )}
+                </select>
+                <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg transition-colors whitespace-nowrap"
+                    title="Upload a custom font (.ttf, .otf, .woff, .woff2)"
+                >
+                    <Upload size={13} />
+                    Upload
                 </button>
-            ))}
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".ttf,.otf,.woff,.woff2"
+                    className="hidden"
+                    onChange={handleFileChange}
+                />
+            </div>
+            {customFonts.length > 0 && (
+                <div className="space-y-1 pt-1">
+                    {customFonts.map((f) => (
+                        <div
+                            key={f.name}
+                            className="flex items-center justify-between px-2.5 py-1.5 text-xs rounded-lg bg-gray-50 border border-gray-100"
+                        >
+                            <span className="text-gray-600 truncate" style={{ fontFamily: `"${f.name}", sans-serif` }}>
+                                {f.name}
+                            </span>
+                            <button
+                                type="button"
+                                onClick={() => onRemoveFont(f.name)}
+                                className="ml-2 flex-shrink-0 text-gray-400 hover:text-red-500 transition-colors"
+                                title={`Remove ${f.name}`}
+                            >
+                                <Trash2 size={12} />
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
-    </div>
-);
+    );
+};
 
 export const StylesModal: React.FC<StylesModalProps> = ({
     isOpen,
@@ -157,6 +228,22 @@ export const StylesModal: React.FC<StylesModalProps> = ({
     const handleReset = () => {
         setLocalSettings(DEFAULT_STYLE_SETTINGS);
         onSettingsChange(DEFAULT_STYLE_SETTINGS);
+    };
+
+    const handleAddFont = (font: CustomFont) => {
+        const existing = localSettings.customFonts ?? [];
+        // Replace if same name already exists
+        const filtered = existing.filter((f) => f.name !== font.name);
+        update({ customFonts: [...filtered, font] });
+    };
+
+    const handleRemoveFont = (name: string) => {
+        const customFonts = (localSettings.customFonts ?? []).filter((f) => f.name !== name);
+        const patch: Partial<StyleSettings> = { customFonts };
+        // If the removed font was selected, fall back to 'sans'
+        if (localSettings.fontFamily === name) patch.fontFamily = 'sans';
+        if (localSettings.headingFontFamily === name) patch.headingFontFamily = 'sans';
+        update(patch);
     };
 
     if (!isOpen) return null;
@@ -220,15 +307,21 @@ export const StylesModal: React.FC<StylesModalProps> = ({
                 <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5">
                     {activeTab === 'typography' && (
                         <>
-                            <FontSelector
+                            <FontDropdown
                                 label="Body Font"
                                 value={localSettings.fontFamily}
+                                customFonts={localSettings.customFonts ?? []}
                                 onChange={(v) => update({ fontFamily: v })}
+                                onAddFont={handleAddFont}
+                                onRemoveFont={handleRemoveFont}
                             />
-                            <FontSelector
+                            <FontDropdown
                                 label="Heading Font"
                                 value={localSettings.headingFontFamily}
+                                customFonts={localSettings.customFonts ?? []}
                                 onChange={(v) => update({ headingFontFamily: v })}
+                                onAddFont={handleAddFont}
+                                onRemoveFont={handleRemoveFont}
                             />
                             <SliderInput
                                 label="Font Size"
@@ -409,6 +502,15 @@ export const StylesModal: React.FC<StylesModalProps> = ({
                       <div className="space-y-6">
                         <div className="bg-blue-50 p-3 rounded-lg text-sm text-blue-700 border border-blue-100">
                                                      Use <code>{'{date}'}</code>, <code>{'{page}'}</code>, or <code>{'{pages}'}</code>. Legacy <code>counter(page)</code> and <code>counter(pages)</code> also work.
+                        </div>
+
+                        <div>
+                            <h3 className="text-sm font-semibold text-gray-700 mb-3 border-b pb-2">Appearance</h3>
+                            <ColorInput
+                                label="Header & Footer Color"
+                                value={localSettings.headerFooterColor}
+                                onChange={(v) => update({ headerFooterColor: v })}
+                            />
                         </div>
 
                         <div>

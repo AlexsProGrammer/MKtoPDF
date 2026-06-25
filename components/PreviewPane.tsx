@@ -120,7 +120,7 @@ export const PreviewPane = forwardRef<HTMLDivElement, PreviewPaneProps>(({
       )}
     >
       <div 
-        className="prose-preview mx-auto bg-white shadow-sm p-10 min-h-full rounded-lg relative"
+        className="prose-preview mx-auto shadow-sm p-10 min-h-full rounded-lg relative"
         style={cssVars as React.CSSProperties}
       >
         {/* Content container managed via ref for post-processing */}

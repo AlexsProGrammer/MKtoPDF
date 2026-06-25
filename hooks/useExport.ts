@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
-import { StyleSettings, stylesToCSSVars } from '../lib/styleSettings';
+import { StyleSettings, stylesToCSSVars, resolveFontFamily, buildFontFaceRules } from '../lib/styleSettings';
 import { buildPageRules, hasCustomHeaderFooter } from '../lib/headerFooter';
 import { inlineImageSourcesForExport } from '../lib/sessionImages';
 
@@ -174,12 +174,8 @@ export const useExport = () => {
         .join('\n');
 
       // Resolve CSS vars to literal values for the iframe (iframe can't inherit parent CSS vars)
-      const FONT_FAMILIES: Record<string, string> = {
-        sans: "'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif",
-        serif: "'Georgia', 'Times New Roman', serif",
-        mono: "'Fira Code', 'JetBrains Mono', ui-monospace, monospace",
-      };
-      const fontFamily = FONT_FAMILIES[settings.fontFamily] || FONT_FAMILIES.sans;
+      const fontFamily = resolveFontFamily(settings.fontFamily, settings.customFonts);
+      const headingFontFamily = resolveFontFamily(settings.headingFontFamily, settings.customFonts);
       const fontSize = `${settings.fontSize}px`;
       const lineHeight = `${settings.lineHeight}`;
       const textColor = settings.textColor || '#334155';
@@ -187,6 +183,7 @@ export const useExport = () => {
       const accentColor = settings.accentColor || '#4f46e5';
       const codeBg = settings.codeBgColor || '#f6f8fa';
       const pAlign = settings.paragraphAlign || 'left';
+      const bgColor = settings.backgroundColor || '#ffffff';
       const hasHeaderOrFooter = hasCustomHeaderFooter(settings);
       const geometry = getExportPageGeometry(orientation, hasHeaderOrFooter);
       debugLog('export geometry', {
@@ -201,6 +198,8 @@ export const useExport = () => {
       });
 
       const pagedStyles = `
+        ${buildFontFaceRules(settings.customFonts)}
+
         ${buildPageRules(settings, orientation, { marginMm: geometry.marginMm })}
 
         :root {
@@ -209,7 +208,7 @@ export const useExport = () => {
         }
 
         .pagedjs_page {
-          background-color: white;
+          background-color: ${bgColor};
           box-shadow: none;
           margin-bottom: 0;
           flex: none;
@@ -243,7 +242,7 @@ export const useExport = () => {
           font-size: ${fontSize};
           line-height: ${lineHeight};
           color: ${textColor};
-          background-color: #ffffff;
+          background-color: ${bgColor};
           width: 100%;
           max-width: min(var(--md-max-width, 900px), var(--md-export-content-width));
           box-sizing: border-box;
@@ -253,6 +252,7 @@ export const useExport = () => {
 
         :is(.prose-preview, .pagedjs_page_content) h1 {
           font-size: 2em; font-weight: 800;
+          font-family: ${headingFontFamily};
           margin-bottom: 0.5em; margin-top: 1.2em;
           color: ${headingColor};
           letter-spacing: -0.02em;
@@ -261,14 +261,15 @@ export const useExport = () => {
         }
         :is(.prose-preview, .pagedjs_page_content) h2 {
           font-size: 1.5em; font-weight: 700;
+          font-family: ${headingFontFamily};
           margin-bottom: 0.5em; margin-top: 1.5em;
           color: ${headingColor};
           letter-spacing: -0.01em;
           border-bottom: 1px solid #e2e8f0;
           padding-bottom: 0.15em;
         }
-        :is(.prose-preview, .pagedjs_page_content) h3 { font-size: 1.25em; font-weight: 600; margin-bottom: 0.4em; margin-top: 1.3em; color: ${headingColor}; }
-        :is(.prose-preview, .pagedjs_page_content) h4 { font-size: 1.1em; font-weight: 600; margin-bottom: 0.3em; margin-top: 1em; color: ${headingColor}; }
+        :is(.prose-preview, .pagedjs_page_content) h3 { font-size: 1.25em; font-weight: 600; font-family: ${headingFontFamily}; margin-bottom: 0.4em; margin-top: 1.3em; color: ${headingColor}; }
+        :is(.prose-preview, .pagedjs_page_content) h4 { font-size: 1.1em; font-weight: 600; font-family: ${headingFontFamily}; margin-bottom: 0.3em; margin-top: 1em; color: ${headingColor}; }
         :is(.prose-preview, .pagedjs_page_content) p { margin-bottom: 1em; line-height: ${lineHeight}; text-align: ${pAlign}; }
         :is(.prose-preview, .pagedjs_page_content) a { color: ${accentColor}; text-decoration: underline; text-underline-offset: 2px; }
         :is(.prose-preview, .pagedjs_page_content) strong { font-weight: 700; }

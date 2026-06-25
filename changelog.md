@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.6] - 2026-06-25
+
+### Fixed
+- style settings: color for header/footer, font families, background color of page
+- smooth scrolling in split view
+- fix content after page break in browser print
+
+### Added
+- style settings: add own font families
+- browser print screen: set default margins=None and deactivate "print headers and footers"
+
+
 ## [0.6.5] - 2026-02-16
 
 ### Fixed
@@ -15,6 +27,7 @@
 - **Code Block Language Labels**: Fenced code blocks with a specified language (e.g. ```javascript) now display the language name as an uppercase label above the code block.
 - **Page Break Indicator Lines**: New toggle button (ruler icon) in the header to show dotted page-boundary lines in the preview pane with page numbers, helping visually plan PDF page layout. Calculation adapts to Portrait/Landscape orientation.
 
+
 ## [0.6.4] - 2024-02-16
 
 ### Fixed
@@ -22,6 +35,7 @@
 - **PagedJS Export Crashes**: Resolved "item doesn't belong to list" and "nextSibling is null" errors during PDF export. We switched to direct CSS interpolation for `@page` content (avoiding `var()` issues) and now inject styles via Blob URLs for better stability.
 - **Preview Orientation Sync**: The preview modal now correctly opens in the orientation selected in the main toolbar, instead of defaulting to portrait.
 - **Style Injection**: Improved how dynamic styles are injected into the previewer to prevent parsing errors.
+
 
 ## [0.6.3] - 2024-02-16
 
@@ -32,6 +46,7 @@
 
 ### Changed
 - **UI**: Moved "Page Preview" button from the editor toolbar to the main header (next to Export) for better visibility.
+
 
 ## [0.6.2] - 2024-02-15
 

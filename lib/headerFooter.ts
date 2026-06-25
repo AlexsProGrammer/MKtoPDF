@@ -117,6 +117,7 @@ export function buildPageRules(
 ): string {
   const marginMm = options.marginMm ?? 20;
   const marginFontSizePt = options.marginFontSizePt ?? 9;
+  const color = settings.headerFooterColor || HEADER_FOOTER_COLOR;
   const headerLeft = formatMarginContent(settings.headerLeft);
   const headerCenter = formatMarginContent(settings.headerCenter);
   const headerRight = formatMarginContent(settings.headerRight);
@@ -129,13 +130,13 @@ export function buildPageRules(
       size: A4 ${orientation};
       margin: ${marginMm}mm;
 
-      @top-left { content: ${headerLeft}; font-family: var(--md-font-family); font-size: ${marginFontSizePt}pt; color: ${HEADER_FOOTER_COLOR}; }
-      @top-center { content: ${headerCenter}; font-family: var(--md-font-family); font-size: ${marginFontSizePt}pt; color: ${HEADER_FOOTER_COLOR}; }
-      @top-right { content: ${headerRight}; font-family: var(--md-font-family); font-size: ${marginFontSizePt}pt; color: ${HEADER_FOOTER_COLOR}; }
+      @top-left { content: ${headerLeft}; font-family: var(--md-font-family); font-size: ${marginFontSizePt}pt; color: ${color}; }
+      @top-center { content: ${headerCenter}; font-family: var(--md-font-family); font-size: ${marginFontSizePt}pt; color: ${color}; }
+      @top-right { content: ${headerRight}; font-family: var(--md-font-family); font-size: ${marginFontSizePt}pt; color: ${color}; }
 
-      @bottom-left { content: ${footerLeft}; font-family: var(--md-font-family); font-size: ${marginFontSizePt}pt; color: ${HEADER_FOOTER_COLOR}; }
-      @bottom-center { content: ${footerCenter}; font-family: var(--md-font-family); font-size: ${marginFontSizePt}pt; color: ${HEADER_FOOTER_COLOR}; }
-      @bottom-right { content: ${footerRight}; font-family: var(--md-font-family); font-size: ${marginFontSizePt}pt; color: ${HEADER_FOOTER_COLOR}; }
+      @bottom-left { content: ${footerLeft}; font-family: var(--md-font-family); font-size: ${marginFontSizePt}pt; color: ${color}; }
+      @bottom-center { content: ${footerCenter}; font-family: var(--md-font-family); font-size: ${marginFontSizePt}pt; color: ${color}; }
+      @bottom-right { content: ${footerRight}; font-family: var(--md-font-family); font-size: ${marginFontSizePt}pt; color: ${color}; }
     }
   `;
 }

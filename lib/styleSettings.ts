@@ -1,11 +1,16 @@
+export interface CustomFont {
+    name: string;
+    dataUrl: string;
+}
+
 /**
  * Style settings interface for the MKtoPDF preview customization.
  * All values map to CSS custom properties (--md-*).
  */
 export interface StyleSettings {
     // Typography
-    fontFamily: 'sans' | 'serif' | 'mono';
-    headingFontFamily: 'sans' | 'serif' | 'mono';
+    fontFamily: string; // 'sans' | 'serif' | 'mono' or a custom font name
+    headingFontFamily: string; // 'sans' | 'serif' | 'mono' or a custom font name
     fontSize: number; // in px (14-22)
     lineHeight: number; // 1.4 - 2.0
 
@@ -32,6 +37,10 @@ export interface StyleSettings {
     footerLeft: string;
     footerCenter: string;
     footerRight: string;
+    headerFooterColor: string;
+
+    // Custom uploaded fonts
+    customFonts: CustomFont[];
 
     // Callout overrides (optional per-type color overrides)
     calloutColors: Partial<Record<string, string>>;
@@ -60,6 +69,8 @@ export const DEFAULT_STYLE_SETTINGS: StyleSettings = {
     footerLeft: '',
     footerCenter: '',
     footerRight: '',
+    headerFooterColor: '#64748b',
+    customFonts: [],
     calloutColors: {},
 };
 
@@ -70,12 +81,36 @@ const FONT_FAMILIES: Record<string, string> = {
 };
 
 /**
+ * Resolve a font key ('sans', 'serif', 'mono', or a custom font name) to a CSS font-family value.
+ */
+export function resolveFontFamily(key: string, customFonts: CustomFont[] = []): string {
+    if (FONT_FAMILIES[key]) return FONT_FAMILIES[key];
+    // Custom font — the @font-face name is the font name itself
+    const custom = customFonts.find((f) => f.name === key);
+    if (custom) return `"${custom.name}", sans-serif`;
+    return FONT_FAMILIES.sans;
+}
+
+/**
+ * Build @font-face CSS rules for all custom fonts.
+ */
+export function buildFontFaceRules(customFonts: CustomFont[] | undefined): string {
+    if (!customFonts?.length) return '';
+    return customFonts
+        .map(
+            (f) =>
+                `@font-face { font-family: "${f.name}"; src: url("${f.dataUrl}"); font-weight: normal; font-style: normal; }`
+        )
+        .join('\n');
+}
+
+/**
  * Convert StyleSettings to a record of CSS custom properties.
  */
 export function stylesToCSSVars(settings: StyleSettings): Record<string, string> {
     return {
-        '--md-font-family': FONT_FAMILIES[settings.fontFamily] || FONT_FAMILIES.sans,
-        '--md-heading-font-family': FONT_FAMILIES[settings.headingFontFamily] || FONT_FAMILIES[settings.fontFamily] || FONT_FAMILIES.sans,
+        '--md-font-family': resolveFontFamily(settings.fontFamily, settings.customFonts),
+        '--md-heading-font-family': resolveFontFamily(settings.headingFontFamily, settings.customFonts),
         '--md-font-size': `${settings.fontSize}px`,
         '--md-line-height': `${settings.lineHeight}`,
         '--md-accent-color': settings.accentColor,
@@ -90,6 +125,7 @@ export function stylesToCSSVars(settings: StyleSettings): Record<string, string>
         '--md-code-bg': settings.codeBgColor,
         '--md-max-width': `${settings.maxContentWidth}px`,
         '--md-p-align': settings.paragraphAlign,
+        '--md-header-footer-color': settings.headerFooterColor || '#64748b',
         // Header & Footer content
         '--md-header-left': `"${settings.headerLeft}"`,
         '--md-header-center': `"${settings.headerCenter}"`,
