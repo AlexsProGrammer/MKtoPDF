@@ -26,6 +26,12 @@ export interface StyleSettings {
     backgroundColor: string;
     codeBgColor: string;
 
+    // Table colors
+    tableBorderColor: string;
+    tableHeaderBg: string;
+    tableHeaderColor: string;
+    tableStripeColor: string;
+
     // Layout
     maxContentWidth: number; // in px (600-1200)
     paragraphAlign: 'left' | 'justify';
@@ -61,6 +67,10 @@ export const DEFAULT_STYLE_SETTINGS: StyleSettings = {
     paragraphColor: '',
     backgroundColor: '#ffffff',
     codeBgColor: '#f6f8fa',
+    tableBorderColor: '#e2e8f0',
+    tableHeaderBg: '#f1f5f9',
+    tableHeaderColor: '#475569',
+    tableStripeColor: '#fafbfc',
     maxContentWidth: 900,
     paragraphAlign: 'left',
     headerLeft: '',
@@ -123,6 +133,10 @@ export function stylesToCSSVars(settings: StyleSettings): Record<string, string>
         '--md-p-color': settings.paragraphColor || settings.textColor,
         '--md-bg-color': settings.backgroundColor,
         '--md-code-bg': settings.codeBgColor,
+        '--md-table-border': settings.tableBorderColor || '#e2e8f0',
+        '--md-table-header-bg': settings.tableHeaderBg || '#f1f5f9',
+        '--md-table-header-color': settings.tableHeaderColor || '#475569',
+        '--md-table-stripe-bg': settings.tableStripeColor || '#fafbfc',
         '--md-max-width': `${settings.maxContentWidth}px`,
         '--md-p-align': settings.paragraphAlign,
         '--md-header-footer-color': settings.headerFooterColor || '#64748b',

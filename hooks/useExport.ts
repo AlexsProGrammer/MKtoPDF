@@ -184,6 +184,10 @@ export const useExport = () => {
       const codeBg = settings.codeBgColor || '#f6f8fa';
       const pAlign = settings.paragraphAlign || 'left';
       const bgColor = settings.backgroundColor || '#ffffff';
+      const tableBorder = settings.tableBorderColor || '#e2e8f0';
+      const tableHeaderBg = settings.tableHeaderBg || '#f1f5f9';
+      const tableHeaderColor = settings.tableHeaderColor || '#475569';
+      const tableStripe = settings.tableStripeColor || '#fafbfc';
       const hasHeaderOrFooter = hasCustomHeaderFooter(settings);
       const geometry = getExportPageGeometry(orientation, hasHeaderOrFooter);
       debugLog('export geometry', {
@@ -295,12 +299,12 @@ export const useExport = () => {
         :is(.prose-preview, .pagedjs_page_content) pre code { background-color: transparent; padding: 0; border: none; font-size: 0.9em; }
 
         /* Tables */
-        :is(.prose-preview, .pagedjs_page_content) table { border-collapse: separate; border-spacing: 0; width: 100%; margin: 1.25em 0; border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; }
-        :is(.prose-preview, .pagedjs_page_content) th, :is(.prose-preview, .pagedjs_page_content) td { border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; padding: 10px 14px; text-align: left; }
+        :is(.prose-preview, .pagedjs_page_content) table { border-collapse: separate; border-spacing: 0; width: 100%; margin: 1.25em 0; border-radius: 10px; overflow: hidden; border: 1px solid ${tableBorder}; }
+        :is(.prose-preview, .pagedjs_page_content) th, :is(.prose-preview, .pagedjs_page_content) td { border-bottom: 1px solid ${tableBorder}; border-right: 1px solid ${tableBorder}; padding: 10px 14px; text-align: left; }
         :is(.prose-preview, .pagedjs_page_content) th:last-child, :is(.prose-preview, .pagedjs_page_content) td:last-child { border-right: none; }
         :is(.prose-preview, .pagedjs_page_content) tr:last-child td { border-bottom: none; }
-        :is(.prose-preview, .pagedjs_page_content) th { background: linear-gradient(to bottom, #f1f5f9, #e2e8f0); font-weight: 600; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.03em; color: #475569; }
-        :is(.prose-preview, .pagedjs_page_content) tr:nth-child(even) td { background-color: #fafbfc; }
+        :is(.prose-preview, .pagedjs_page_content) th { background: ${tableHeaderBg}; font-weight: 600; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.03em; color: ${tableHeaderColor}; }
+        :is(.prose-preview, .pagedjs_page_content) tr:nth-child(even) td { background-color: ${tableStripe}; }
 
         /* Horizontal Rule */
         :is(.prose-preview, .pagedjs_page_content) hr { border: none; height: 3px; background: ${accentColor}; margin: 2em 0; border-radius: 2px; opacity: 0.5; }

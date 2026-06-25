@@ -418,6 +418,32 @@ export const StylesModal: React.FC<StylesModalProps> = ({
                                     />
                                 </div>
                             </div>
+
+                            <div className="border-t border-gray-100 pt-4">
+                                <h3 className="text-sm font-semibold text-gray-700 mb-3">Tables</h3>
+                                <div className="space-y-3">
+                                    <ColorInput
+                                        label="Header Background"
+                                        value={localSettings.tableHeaderBg}
+                                        onChange={(v) => update({ tableHeaderBg: v })}
+                                    />
+                                    <ColorInput
+                                        label="Header Text"
+                                        value={localSettings.tableHeaderColor}
+                                        onChange={(v) => update({ tableHeaderColor: v })}
+                                    />
+                                    <ColorInput
+                                        label="Row Stripe"
+                                        value={localSettings.tableStripeColor}
+                                        onChange={(v) => update({ tableStripeColor: v })}
+                                    />
+                                    <ColorInput
+                                        label="Border"
+                                        value={localSettings.tableBorderColor}
+                                        onChange={(v) => update({ tableBorderColor: v })}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     )}
 

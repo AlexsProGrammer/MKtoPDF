@@ -267,12 +267,12 @@ export const PagePreviewModal: React.FC<PagePreviewModalProps> = ({
       :is(.prose-preview, .pagedjs_page_content) pre code { background-color: transparent; padding: 0; border: none; font-size: 0.9em; }
 
       /* Tables */
-      :is(.prose-preview, .pagedjs_page_content) table { border-collapse: separate; border-spacing: 0; width: 100%; margin: 1.25em 0; border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; }
-      :is(.prose-preview, .pagedjs_page_content) th, :is(.prose-preview, .pagedjs_page_content) td { border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; padding: 10px 14px; text-align: left; }
+      :is(.prose-preview, .pagedjs_page_content) table { border-collapse: separate; border-spacing: 0; width: 100%; margin: 1.25em 0; border-radius: 10px; overflow: hidden; border: 1px solid var(--md-table-border, #e2e8f0); }
+      :is(.prose-preview, .pagedjs_page_content) th, :is(.prose-preview, .pagedjs_page_content) td { border-bottom: 1px solid var(--md-table-border, #e2e8f0); border-right: 1px solid var(--md-table-border, #e2e8f0); padding: 10px 14px; text-align: left; }
       :is(.prose-preview, .pagedjs_page_content) th:last-child, :is(.prose-preview, .pagedjs_page_content) td:last-child { border-right: none; }
       :is(.prose-preview, .pagedjs_page_content) tr:last-child td { border-bottom: none; }
-      :is(.prose-preview, .pagedjs_page_content) th { background: linear-gradient(to bottom, #f1f5f9, #e2e8f0); font-weight: 600; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.03em; color: #475569; }
-      :is(.prose-preview, .pagedjs_page_content) tr:nth-child(even) td { background-color: #fafbfc; }
+      :is(.prose-preview, .pagedjs_page_content) th { background: var(--md-table-header-bg, #f1f5f9); font-weight: 600; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.03em; color: var(--md-table-header-color, #475569); }
+      :is(.prose-preview, .pagedjs_page_content) tr:nth-child(even) td { background-color: var(--md-table-stripe-bg, #fafbfc); }
 
       /* Horizontal Rule */
       :is(.prose-preview, .pagedjs_page_content) hr { border: none; height: 3px; background: var(--md-accent-color, #4f46e5); margin: 2em 0; border-radius: 2px; opacity: 0.5; }
