@@ -8,7 +8,7 @@ import {
   AlignLeft, AlignCenter, AlignRight, AlignJustify,
   Undo2, Redo2, Table, Palette,
   Type, Superscript, Subscript, FileText,
-  Paintbrush, ChevronDown, Upload, WrapText, Grid3x3, Square
+  Paintbrush, ChevronDown, Upload, WrapText, Grid3x3, Square, CornerDownRight
 } from 'lucide-react';
 import clsx from 'clsx';
 import { EditorView } from '@codemirror/view';
@@ -305,6 +305,19 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editorView, onOpenImageManager
     editorView.focus();
   };
 
+  const insertLineBreak = () => {
+    if (!editorView) return;
+    const state = editorView.state;
+    const dispatch = editorView.dispatch;
+    const selection = state.selection.main;
+    const insert = '<br>';
+    dispatch(state.update({
+      changes: { from: selection.from, to: selection.to, insert },
+      selection: { anchor: selection.from + insert.length }
+    }));
+    editorView.focus();
+  };
+
   const insertWorksheetElement = (type: 'space' | 'lines' | 'grid') => {
     if (!editorView) return;
     const state = editorView.state;
@@ -481,10 +494,11 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editorView, onOpenImageManager
 
         <Separator />
 
-        {/* Word Wrap / Page Break */}
+        {/* Word Wrap / Page Break / Line Break */}
         <div className="flex items-center gap-0.5 px-0.5">
            <IconButton icon={WrapText} onClick={() => onToggleWordWrap?.()} title={wordWrap ? 'Disable Word Wrap' : 'Enable Word Wrap'} active={wordWrap} />
            <IconButton icon={FileText} onClick={insertPageBreak} title="Insert Page Break" />
+           <IconButton icon={CornerDownRight} onClick={insertLineBreak} title="Insert Line Break" />
         </div>
 
         <Separator />
