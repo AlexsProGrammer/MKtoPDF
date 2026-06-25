@@ -444,7 +444,7 @@ const App: React.FC = () => {
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 flex-shrink-0">
               MKtoPDF
             </span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 flex-shrink-0">v0.6.6</span>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 flex-shrink-0">v0.6.7</span>
             
             <div className="h-6 w-px bg-gray-300 mx-2 flex-shrink-0"></div>
             

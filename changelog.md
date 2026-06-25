@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.6.7] - 2026-06-25
+
+### Fixed
+- **Style Settings**: Fixed missing fonts
+
+### Added
+- **Style Settings**: Added custom font upload support
+- **Editor Toolbar**: Added custom fonts support
+- **Style Settings**: Reset with custom confirm modal with checkboxes what to reset
+
+
 ## [0.6.6] - 2026-06-25
 
 ### Fixed

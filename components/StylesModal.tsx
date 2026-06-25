@@ -140,6 +140,165 @@ const FontDropdown: React.FC<{
     );
 };
 
+// ---------------------------------------------------------------------------
+// Reset-confirm modal
+// ---------------------------------------------------------------------------
+
+type ResetSectionId = 'typography' | 'colors' | 'callouts' | 'layout' | 'headerFooter' | 'customFonts';
+
+const RESET_SECTIONS: { id: ResetSectionId; label: string; desc: string }[] = [
+    { id: 'typography',   label: 'Typography',     desc: 'Fonts, font size, line height' },
+    { id: 'colors',       label: 'Colors',          desc: 'All color settings' },
+    { id: 'callouts',     label: 'Callouts',        desc: 'Callout text color and per-type overrides' },
+    { id: 'layout',       label: 'Layout',          desc: 'Content width and paragraph alignment' },
+    { id: 'headerFooter', label: 'Header & Footer', desc: 'Header/footer content and color' },
+    { id: 'customFonts',  label: 'Custom Fonts',    desc: 'Remove all uploaded custom fonts' },
+];
+
+function applyPartialReset(current: StyleSettings, sections: Set<ResetSectionId>): StyleSettings {
+    const next = { ...current };
+    const d = DEFAULT_STYLE_SETTINGS;
+    if (sections.has('typography')) {
+        next.fontFamily = d.fontFamily;
+        next.headingFontFamily = d.headingFontFamily;
+        next.fontSize = d.fontSize;
+        next.lineHeight = d.lineHeight;
+    }
+    if (sections.has('colors')) {
+        next.accentColor = d.accentColor;
+        next.headingColor = d.headingColor;
+        next.h1Color = d.h1Color; next.h2Color = d.h2Color;
+        next.h3Color = d.h3Color; next.h4Color = d.h4Color;
+        next.textColor = d.textColor;
+        next.paragraphColor = d.paragraphColor;
+        next.backgroundColor = d.backgroundColor;
+        next.codeBgColor = d.codeBgColor; next.codeTextColor = d.codeTextColor;
+        next.tableBorderColor = d.tableBorderColor; next.tableHeaderBg = d.tableHeaderBg;
+        next.tableHeaderColor = d.tableHeaderColor; next.tableStripeColor = d.tableStripeColor;
+        next.linkColor = d.linkColor;
+    }
+    if (sections.has('callouts')) {
+        next.calloutTextColor = d.calloutTextColor;
+        next.calloutColors = { ...d.calloutColors };
+    }
+    if (sections.has('layout')) {
+        next.maxContentWidth = d.maxContentWidth;
+        next.paragraphAlign = d.paragraphAlign;
+    }
+    if (sections.has('headerFooter')) {
+        next.headerLeft = d.headerLeft; next.headerCenter = d.headerCenter; next.headerRight = d.headerRight;
+        next.footerLeft = d.footerLeft; next.footerCenter = d.footerCenter; next.footerRight = d.footerRight;
+        next.headerFooterColor = d.headerFooterColor;
+    }
+    if (sections.has('customFonts')) {
+        next.customFonts = [];
+        if (!BUILT_IN_FONTS.some((f) => f.key === next.fontFamily)) next.fontFamily = d.fontFamily;
+        if (!BUILT_IN_FONTS.some((f) => f.key === next.headingFontFamily)) next.headingFontFamily = d.headingFontFamily;
+    }
+    return next;
+}
+
+const ResetConfirmModal: React.FC<{
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: (sections: Set<ResetSectionId>) => void;
+}> = ({ isOpen, onClose, onConfirm }) => {
+    const [checked, setChecked] = useState<Set<ResetSectionId>>(
+        () => new Set(RESET_SECTIONS.map((s) => s.id))
+    );
+
+    useEffect(() => {
+        if (isOpen) setChecked(new Set(RESET_SECTIONS.map((s) => s.id)));
+    }, [isOpen]);
+
+    if (!isOpen) return null;
+
+    const allChecked = checked.size === RESET_SECTIONS.length;
+    const toggle = (id: ResetSectionId) =>
+        setChecked((prev) => {
+            const next = new Set(prev);
+            next.has(id) ? next.delete(id) : next.add(id);
+            return next;
+        });
+
+    return (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center" onClick={onClose}>
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+            <div
+                className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm border border-gray-200 overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
+            >
+                {/* Header */}
+                <div className="px-6 pt-5 pb-3">
+                    <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0">
+                            <RotateCcw size={17} className="text-red-600" />
+                        </div>
+                        <div>
+                            <h3 className="text-base font-bold text-gray-900">Reset Settings</h3>
+                            <p className="text-xs text-gray-500">Choose which settings to reset to defaults.</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Select-all row */}
+                <div className="px-6 pb-1">
+                    <label className="flex items-center gap-2.5 cursor-pointer select-none py-1.5 border-b border-gray-100">
+                        <input
+                            type="checkbox"
+                            checked={allChecked}
+                            onChange={() =>
+                                setChecked(
+                                    allChecked
+                                        ? new Set()
+                                        : new Set(RESET_SECTIONS.map((s) => s.id))
+                                )
+                            }
+                            className="w-4 h-4 rounded accent-red-600 cursor-pointer"
+                        />
+                        <span className="text-sm font-semibold text-gray-700">Select all</span>
+                    </label>
+                </div>
+
+                {/* Section checkboxes */}
+                <div className="px-6 py-3 space-y-3">
+                    {RESET_SECTIONS.map((section) => (
+                        <label key={section.id} className="flex items-start gap-2.5 cursor-pointer select-none">
+                            <input
+                                type="checkbox"
+                                checked={checked.has(section.id)}
+                                onChange={() => toggle(section.id)}
+                                className="mt-0.5 w-4 h-4 rounded accent-red-600 cursor-pointer"
+                            />
+                            <div>
+                                <p className="text-sm font-medium text-gray-800">{section.label}</p>
+                                <p className="text-xs text-gray-400">{section.desc}</p>
+                            </div>
+                        </label>
+                    ))}
+                </div>
+
+                {/* Actions */}
+                <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-2">
+                    <button
+                        onClick={onClose}
+                        className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={() => { onConfirm(checked); onClose(); }}
+                        disabled={checked.size === 0}
+                        className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed rounded-lg transition-colors"
+                    >
+                        Reset Selected
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 export const StylesModal: React.FC<StylesModalProps> = ({
     isOpen,
     onClose,
@@ -170,10 +329,9 @@ export const StylesModal: React.FC<StylesModalProps> = ({
         update({ calloutColors });
     };
 
-    const handleReset = () => {
-        setLocalSettings(DEFAULT_STYLE_SETTINGS);
-        onSettingsChange(DEFAULT_STYLE_SETTINGS);
-    };
+    const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+
+    const handleReset = () => setIsResetModalOpen(true);
 
     const handleAddFont = (font: CustomFont) => {
         const existing = localSettings.customFonts ?? [];
@@ -205,6 +363,7 @@ export const StylesModal: React.FC<StylesModalProps> = ({
     if (!isOpen) return null;
 
     return (
+        <>
         <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={onClose}>
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
             <div
@@ -225,7 +384,7 @@ export const StylesModal: React.FC<StylesModalProps> = ({
                     <div className="flex items-center gap-2">
                         <button
                             onClick={handleReset}
-                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors"
+                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-600 bg-white hover:bg-red-50 border border-red-200 rounded-lg transition-colors"
                             title="Reset to defaults"
                         >
                             <RotateCcw size={13} />
@@ -644,5 +803,15 @@ export const StylesModal: React.FC<StylesModalProps> = ({
                 </div>
             </div>
         </div>
+        <ResetConfirmModal
+            isOpen={isResetModalOpen}
+            onClose={() => setIsResetModalOpen(false)}
+            onConfirm={(sections) => {
+                const next = applyPartialReset(localSettings, sections);
+                setLocalSettings(next);
+                onSettingsChange(next);
+            }}
+        />
+        </>
     );
 };
