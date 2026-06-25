@@ -180,6 +180,10 @@ export const useExport = () => {
       const lineHeight = `${settings.lineHeight}`;
       const textColor = settings.textColor || '#334155';
       const headingColor = settings.headingColor || '#1e293b';
+      const h1Color = settings.h1Color || headingColor;
+      const h2Color = settings.h2Color || headingColor;
+      const h3Color = settings.h3Color || headingColor;
+      const h4Color = settings.h4Color || headingColor;
       const accentColor = settings.accentColor || '#4f46e5';
       const codeBg = settings.codeBgColor || '#f6f8fa';
       const pAlign = settings.paragraphAlign || 'left';
@@ -258,7 +262,7 @@ export const useExport = () => {
           font-size: 2em; font-weight: 800;
           font-family: ${headingFontFamily};
           margin-bottom: 0.5em; margin-top: 1.2em;
-          color: ${headingColor};
+          color: ${h1Color};
           letter-spacing: -0.02em;
           border-bottom: 2px solid ${accentColor};
           padding-bottom: 0.2em;
@@ -267,13 +271,13 @@ export const useExport = () => {
           font-size: 1.5em; font-weight: 700;
           font-family: ${headingFontFamily};
           margin-bottom: 0.5em; margin-top: 1.5em;
-          color: ${headingColor};
+          color: ${h2Color};
           letter-spacing: -0.01em;
           border-bottom: 1px solid #e2e8f0;
           padding-bottom: 0.15em;
         }
-        :is(.prose-preview, .pagedjs_page_content) h3 { font-size: 1.25em; font-weight: 600; font-family: ${headingFontFamily}; margin-bottom: 0.4em; margin-top: 1.3em; color: ${headingColor}; }
-        :is(.prose-preview, .pagedjs_page_content) h4 { font-size: 1.1em; font-weight: 600; font-family: ${headingFontFamily}; margin-bottom: 0.3em; margin-top: 1em; color: ${headingColor}; }
+        :is(.prose-preview, .pagedjs_page_content) h3 { font-size: 1.25em; font-weight: 600; font-family: ${headingFontFamily}; margin-bottom: 0.4em; margin-top: 1.3em; color: ${h3Color}; }
+        :is(.prose-preview, .pagedjs_page_content) h4 { font-size: 1.1em; font-weight: 600; font-family: ${headingFontFamily}; margin-bottom: 0.3em; margin-top: 1em; color: ${h4Color}; }
         :is(.prose-preview, .pagedjs_page_content) p { margin-bottom: 1em; line-height: ${lineHeight}; text-align: ${pAlign}; }
         :is(.prose-preview, .pagedjs_page_content) a { color: ${accentColor}; text-decoration: underline; text-underline-offset: 2px; }
         :is(.prose-preview, .pagedjs_page_content) strong { font-weight: 700; }

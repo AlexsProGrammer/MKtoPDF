@@ -227,7 +227,7 @@ export const PagePreviewModal: React.FC<PagePreviewModalProps> = ({
         font-size: 2em; font-weight: 800;
         font-family: var(--md-heading-font-family, var(--md-font-family));
         margin-bottom: 0.5em; margin-top: 1.2em;
-        color: var(--md-heading-color, #1e293b);
+        color: var(--md-h1-color, var(--md-heading-color, #1e293b));
         letter-spacing: -0.02em;
         border-bottom: 2px solid var(--md-accent-color, #4f46e5);
         padding-bottom: 0.2em;
@@ -236,13 +236,13 @@ export const PagePreviewModal: React.FC<PagePreviewModalProps> = ({
         font-size: 1.5em; font-weight: 700;
         font-family: var(--md-heading-font-family, var(--md-font-family));
         margin-bottom: 0.5em; margin-top: 1.5em;
-        color: var(--md-heading-color, #1e293b);
+        color: var(--md-h2-color, var(--md-heading-color, #1e293b));
         letter-spacing: -0.01em;
         border-bottom: 1px solid #e2e8f0;
         padding-bottom: 0.15em;
       }
-      :is(.prose-preview, .pagedjs_page_content) h3 { font-size: 1.25em; font-weight: 600; font-family: var(--md-heading-font-family, var(--md-font-family)); margin-bottom: 0.4em; margin-top: 1.3em; color: var(--md-heading-color, #1e293b); }
-      :is(.prose-preview, .pagedjs_page_content) h4 { font-size: 1.1em; font-weight: 600; font-family: var(--md-heading-font-family, var(--md-font-family)); margin-bottom: 0.3em; margin-top: 1em; color: var(--md-heading-color, #1e293b); }
+      :is(.prose-preview, .pagedjs_page_content) h3 { font-size: 1.25em; font-weight: 600; font-family: var(--md-heading-font-family, var(--md-font-family)); margin-bottom: 0.4em; margin-top: 1.3em; color: var(--md-h3-color, var(--md-heading-color, #1e293b)); }
+      :is(.prose-preview, .pagedjs_page_content) h4 { font-size: 1.1em; font-weight: 600; font-family: var(--md-heading-font-family, var(--md-font-family)); margin-bottom: 0.3em; margin-top: 1em; color: var(--md-h4-color, var(--md-heading-color, #1e293b)); }
       :is(.prose-preview, .pagedjs_page_content) p { margin-bottom: 1em; line-height: var(--md-line-height, 1.6); text-align: var(--md-p-align, left); }
       :is(.prose-preview, .pagedjs_page_content) a { color: var(--md-accent-color, #4f46e5); text-decoration: underline; text-underline-offset: 2px; }
       :is(.prose-preview, .pagedjs_page_content) strong { font-weight: 700; }
