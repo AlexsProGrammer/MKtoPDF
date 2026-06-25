@@ -123,8 +123,22 @@ const App: React.FC = () => {
 
   const { printPdf, isExporting } = useExport();
 
-  // Scroll Sync Ref
-  const isScrollingRef = useRef(false);
+  // Scroll Sync Refs
+  //
+  // Each flag means "I just called scrollTo() on this pane — the NEXT scroll
+  // event on that pane is the programmatic feedback; consume the flag and
+  // skip that event."  The flag is cleared BY the feedback event itself, not
+  // by a timer or rAF.  This is critical: the browser schedules the feedback
+  // scroll event for the frame AFTER the scrollTo() call (because scroll steps
+  // already ran for the current frame), so any time-based approach (rAF, short
+  // setTimeout) clears the flag too early and lets the feedback through.
+  //
+  // A 100 ms safety timer clears the flag if scrollTo() turns out to be a
+  // no-op (element already at target ⇒ no scroll event ever fires).
+  const isEditorSyncingRef = useRef(false);
+  const isPreviewSyncingRef = useRef(false);
+  const editorSyncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const previewSyncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Sync scroll effect
   useEffect(() => {
@@ -133,30 +147,44 @@ const App: React.FC = () => {
     const editorScroller = editorView.scrollDOM;
     const previewScroller = previewRef.current;
 
+    // Called when the PREVIEW scrolls — syncs the editor to match.
     const syncEditorToPreview = () => {
-      if (isScrollingRef.current) return;
-      isScrollingRef.current = true;
-      
-      const percentage = previewScroller.scrollTop / (previewScroller.scrollHeight - previewScroller.clientHeight);
+      if (isPreviewSyncingRef.current) {
+        // Consume the expected feedback event from our own scrollTo() call.
+        isPreviewSyncingRef.current = false;
+        if (previewSyncTimerRef.current) { clearTimeout(previewSyncTimerRef.current); previewSyncTimerRef.current = null; }
+        return;
+      }
+
+      const scrollable = previewScroller.scrollHeight - previewScroller.clientHeight;
+      const percentage = scrollable > 0 ? previewScroller.scrollTop / scrollable : 0;
       const targetScrollTop = percentage * (editorScroller.scrollHeight - editorScroller.clientHeight);
-      
-      editorScroller.scrollTop = targetScrollTop;
-      
-      // Debounce reset
-      setTimeout(() => { isScrollingRef.current = false; }, 50);
+
+      isEditorSyncingRef.current = true;
+      if (editorSyncTimerRef.current) clearTimeout(editorSyncTimerRef.current);
+      editorSyncTimerRef.current = setTimeout(() => { isEditorSyncingRef.current = false; }, 100);
+
+      editorScroller.scrollTo({ top: targetScrollTop, behavior: 'instant' });
     };
 
+    // Called when the EDITOR scrolls — syncs the preview to match.
     const syncPreviewToEditor = () => {
-      if (isScrollingRef.current) return;
-      isScrollingRef.current = true;
-      
-      const percentage = editorScroller.scrollTop / (editorScroller.scrollHeight - editorScroller.clientHeight);
+      if (isEditorSyncingRef.current) {
+        // Consume the expected feedback event from our own scrollTo() call.
+        isEditorSyncingRef.current = false;
+        if (editorSyncTimerRef.current) { clearTimeout(editorSyncTimerRef.current); editorSyncTimerRef.current = null; }
+        return;
+      }
+
+      const scrollable = editorScroller.scrollHeight - editorScroller.clientHeight;
+      const percentage = scrollable > 0 ? editorScroller.scrollTop / scrollable : 0;
       const targetScrollTop = percentage * (previewScroller.scrollHeight - previewScroller.clientHeight);
-      
-      previewScroller.scrollTop = targetScrollTop;
-      
-      // Debounce reset
-      setTimeout(() => { isScrollingRef.current = false; }, 50);
+
+      isPreviewSyncingRef.current = true;
+      if (previewSyncTimerRef.current) clearTimeout(previewSyncTimerRef.current);
+      previewSyncTimerRef.current = setTimeout(() => { isPreviewSyncingRef.current = false; }, 100);
+
+      previewScroller.scrollTo({ top: targetScrollTop, behavior: 'instant' });
     };
 
     editorScroller.addEventListener('scroll', syncPreviewToEditor);
@@ -165,6 +193,8 @@ const App: React.FC = () => {
     return () => {
       editorScroller.removeEventListener('scroll', syncPreviewToEditor);
       previewScroller.removeEventListener('scroll', syncEditorToPreview);
+      if (editorSyncTimerRef.current) clearTimeout(editorSyncTimerRef.current);
+      if (previewSyncTimerRef.current) clearTimeout(previewSyncTimerRef.current);
     };
   }, [isSyncScrollEnabled, viewMode, editorView]);
 

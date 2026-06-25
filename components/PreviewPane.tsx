@@ -115,7 +115,7 @@ export const PreviewPane = forwardRef<HTMLDivElement, PreviewPaneProps>(({
     <div 
       ref={ref}
       className={clsx(
-        "h-full overflow-y-auto p-8 bg-gray-50 scroll-smooth",
+        "h-full overflow-y-auto p-8 bg-gray-50",
         "prose-preview-container"
       )}
     >
