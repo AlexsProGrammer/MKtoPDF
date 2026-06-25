@@ -13,7 +13,7 @@ import { parseMarkdown } from './lib/markdownParser';
 import { useExport } from './hooks/useExport';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { ViewMode } from './types';
-import { StyleSettings, DEFAULT_STYLE_SETTINGS, buildFontFaceRules } from './lib/styleSettings';
+import { StyleSettings, DEFAULT_STYLE_SETTINGS, buildFontFaceRules, CustomFont } from './lib/styleSettings';
 import { Printer, Save, RefreshCw, Palette, Edit2, Link as LinkIcon, Unlink, FileText, Ruler } from 'lucide-react';
 import clsx from 'clsx';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -592,6 +592,14 @@ const App: React.FC = () => {
             <Toolbar 
               editorView={editorView}
               onOpenImageManager={() => setIsImageManagerOpen(true)}
+              customFonts={styleSettings.customFonts ?? []}
+              onFontUploaded={(font: CustomFont) =>
+                setStyleSettings((prev) => {
+                  const existing = prev?.customFonts ?? [];
+                  const filtered = existing.filter((f) => f.name !== font.name);
+                  return { ...DEFAULT_STYLE_SETTINGS, ...prev, customFonts: [...filtered, font] };
+                })
+              }
             />
 
             <div className="flex-1 overflow-hidden">

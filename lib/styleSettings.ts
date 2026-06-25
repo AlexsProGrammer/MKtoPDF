@@ -96,6 +96,10 @@ const FONT_FAMILIES: Record<string, string> = {
     sans: "'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif",
     serif: "'Georgia', 'Times New Roman', serif",
     mono: "'Fira Code', 'JetBrains Mono', ui-monospace, monospace",
+    arial: 'Arial, Helvetica, sans-serif',
+    'times-new-roman': "'Times New Roman', Times, serif",
+    'courier-new': "'Courier New', Courier, monospace",
+    verdana: 'Verdana, Geneva, sans-serif',
 };
 
 /**

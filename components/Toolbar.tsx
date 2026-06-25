@@ -13,11 +13,14 @@ import {
 import clsx from 'clsx';
 import { EditorView } from '@codemirror/view';
 import { undo, redo } from '@codemirror/commands';
+import { CustomFont } from '../lib/styleSettings';
 
 interface ToolbarProps {
   editorView: EditorView | null;
   onOpenPagePreview?: () => void;
   onOpenImageManager?: () => void;
+  customFonts?: CustomFont[];
+  onFontUploaded?: (font: CustomFont) => void;
 }
 
 const FONT_OPTIONS = [
@@ -57,7 +60,7 @@ const Portal: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return ReactDOM.createPortal(children, document.body);
 };
 
-export const Toolbar: React.FC<ToolbarProps> = ({ editorView, onOpenImageManager }) => {
+export const Toolbar: React.FC<ToolbarProps> = ({ editorView, onOpenImageManager, customFonts, onFontUploaded }) => {
   // Use unique keys for dropdown management
   // null = no dropdown open
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -68,6 +71,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editorView, onOpenImageManager
 
   // We need refs to the trigger buttons to position the portal content
   const buttonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const toolbarFontUploadRef = useRef<HTMLInputElement>(null);
 
   // Close dropdowns on outside click or scroll
   useEffect(() => {
@@ -207,6 +211,20 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editorView, onOpenImageManager
   const insertFontFamily = (font: string) => {
     if (!font) return;
     wrapHtml('span', `style="font-family:${font}"`);
+  };
+
+  const handleToolbarFontUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const name = file.name.replace(/\.[^.]+$/, '');
+    const reader = new FileReader();
+    reader.onload = () => {
+      const font: CustomFont = { name, dataUrl: reader.result as string };
+      onFontUploaded?.(font);
+      insertFontFamily(`'${name}', sans-serif`);
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
   };
 
   const insertFontSize = (size: string) => {
@@ -478,16 +496,41 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editorView, onOpenImageManager
             )}
             
             {activeDropdown === 'font' && (
-              FONT_OPTIONS.map((opt) => (
+              <>
+                {FONT_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.label}
+                    onClick={() => insertFontFamily(opt.value)}
+                    className="block w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700"
+                    style={opt.value ? { fontFamily: opt.value } : undefined}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+                {(customFonts?.length ?? 0) > 0 && (
+                  <>
+                    <div className="mx-2 my-1 border-t border-gray-200" />
+                    {customFonts!.map((cf) => (
+                      <button
+                        key={cf.name}
+                        onClick={() => insertFontFamily(`'${cf.name}', sans-serif`)}
+                        className="block w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700"
+                        style={{ fontFamily: `'${cf.name}', sans-serif` }}
+                      >
+                        {cf.name}
+                      </button>
+                    ))}
+                  </>
+                )}
+                <div className="mx-2 my-1 border-t border-gray-200" />
                 <button
-                  key={opt.label}
-                  onClick={() => insertFontFamily(opt.value)}
-                  className="block w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700"
-                  style={opt.value ? { fontFamily: opt.value } : undefined}
+                  onClick={() => { setActiveDropdown(null); toolbarFontUploadRef.current?.click(); }}
+                  className="flex items-center gap-2 w-full px-3 py-1.5 text-sm text-indigo-600 hover:bg-indigo-50"
                 >
-                  {opt.label}
+                  <Upload size={13} />
+                  Upload font…
                 </button>
-              ))
+              </>
             )}
 
             {activeDropdown === 'size' && (
@@ -543,6 +586,15 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editorView, onOpenImageManager
           </div>
         </Portal>
       )}
+
+      {/* Hidden file input for font upload — always mounted so click() works after dropdown closes */}
+      <input
+        ref={toolbarFontUploadRef}
+        type="file"
+        accept=".ttf,.otf,.woff,.woff2"
+        className="hidden"
+        onChange={handleToolbarFontUpload}
+      />
     </>
   );
 };
