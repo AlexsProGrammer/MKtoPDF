@@ -39,6 +39,7 @@ interface PagePreviewModalProps {
   initialOrientation: 'portrait' | 'landscape';
   styleSettings?: StyleSettings;
   imageSources?: Record<string, string>;
+  docTitle?: string;
 }
 
 export const PagePreviewModal: React.FC<PagePreviewModalProps> = ({
@@ -48,6 +49,7 @@ export const PagePreviewModal: React.FC<PagePreviewModalProps> = ({
   initialOrientation,
   styleSettings,
   imageSources = {},
+  docTitle,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const previewerRef = useRef<Previewer | null>(null);
@@ -171,7 +173,7 @@ export const PagePreviewModal: React.FC<PagePreviewModalProps> = ({
     const pageRules = `
       ${buildFontFaceRules(settings.customFonts)}
 
-      ${buildPageRules(settings, orientation, { marginMm: geometry.marginMm })}
+      ${buildPageRules(settings, orientation, { marginMm: geometry.marginMm, docName: docTitle })}
 
       :root {
         --md-export-content-width: ${geometry.contentWidthMm}mm;

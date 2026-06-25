@@ -16,13 +16,27 @@ describe('formatMarginContent', () => {
     expect(formatMarginContent('Page {page} of {pages}')).toBe('"Page " counter(page) " of " counter(pages)');
   });
 
-  it('supports legacy CSS counter syntax', () => {
-    expect(formatMarginContent('counter(page) / counter(pages)')).toBe('counter(page) " / " counter(pages)');
-  });
-
   it('formats the date command as text content', () => {
     expect(formatMarginContent('Printed {date}')).toContain('Printed ');
     expect(formatMarginContent('Printed {date}')).toContain('202');
+  });
+
+  it('formats {time} as a text token with HH:MM', () => {
+    const result = formatMarginContent('{time}');
+    expect(result).toMatch(/^"\d{2}:\d{2}"$/);
+  });
+
+  it('formats {year} as the current year', () => {
+    const result = formatMarginContent('{year}');
+    expect(result).toContain(String(new Date().getFullYear()));
+  });
+
+  it('formats {doc_name} using the provided docName option', () => {
+    expect(formatMarginContent('{doc_name}', 'My Report')).toBe('"My Report"');
+  });
+
+  it('formats {doc_name} as empty string when no docName provided', () => {
+    expect(formatMarginContent('{doc_name}')).toBe('""');
   });
 });
 

@@ -285,7 +285,7 @@ export const StylesModal: React.FC<StylesModalProps> = ({
                 </div>
 
                 {/* Tabs */}
-                <div className="flex border-b border-gray-100 px-6 gap-1 bg-gray-50/50 overflow-x-auto no-scrollbar">
+                <div className="flex border-b border-gray-100 px-6 gap-1 bg-gray-50/50 overflow-x-auto overflow-y-hidden no-scrollbar">
                     {TABS.map((tab) => (
                         <button
                             key={tab.id}
@@ -545,8 +545,30 @@ export const StylesModal: React.FC<StylesModalProps> = ({
 
                     {activeTab === 'export' && (
                       <div className="space-y-6">
-                        <div className="bg-blue-50 p-3 rounded-lg text-sm text-blue-700 border border-blue-100">
-                                                     Use <code>{'{date}'}</code>, <code>{'{page}'}</code>, or <code>{'{pages}'}</code>. Legacy <code>counter(page)</code> and <code>counter(pages)</code> also work.
+                        <div className="rounded-lg border border-gray-200 overflow-hidden text-xs">
+                            <table className="w-full border-collapse">
+                                <thead>
+                                    <tr className="bg-gray-100 text-left">
+                                        <th className="px-3 py-1.5 font-semibold text-gray-600 border-b border-gray-200">Command</th>
+                                        <th className="px-3 py-1.5 font-semibold text-gray-600 border-b border-gray-200">Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {([
+                                        ['{page}',     'Current page number'],
+                                        ['{pages}',    'Total number of pages'],
+                                        ['{date}',     'Current date (e.g. Jun 25, 2026)'],
+                                        ['{time}',     'Current time (e.g. 14:30)'],
+                                        ['{year}',     'Current year (e.g. 2026)'],
+                                        ['{doc_name}', 'Document title'],
+                                    ] as const).map(([cmd, desc], i) => (
+                                        <tr key={cmd} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                                            <td className="px-3 py-1.5 font-mono text-indigo-600 border-b border-gray-100">{cmd}</td>
+                                            <td className="px-3 py-1.5 text-gray-600 border-b border-gray-100">{desc}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
 
                         <div>

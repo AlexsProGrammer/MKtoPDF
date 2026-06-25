@@ -5,9 +5,16 @@ export const HEADER_FOOTER_COLOR = '#64748b';
 interface PageRuleOptions {
   marginMm?: number;
   marginFontSizePt?: number;
+  docName?: string;
 }
 
-const COMMAND_REGEX = /(counter\(\s*(page|pages)\s*\)|\{\{\s*(date|currentDate|page|pages|currentPage|totalPages|maxPages)\s*\}\}|\{\s*(date|currentDate|page|pages|currentPage|totalPages|maxPages)\s*\})/gi;
+const SUPPORTED_COMMANDS = 'date|currentDate|page|pages|currentPage|totalPages|maxPages|time|year|doc_name|docName';
+
+// Matches both {{ command }} and { command } syntax (whitespace-tolerant)
+const COMMAND_REGEX = new RegExp(
+  `\\{\\{\\s*(?:${SUPPORTED_COMMANDS})\\s*\\}\\}|\\{\\s*(?:${SUPPORTED_COMMANDS})\\s*\\}`,
+  'gi'
+);
 
 type ContentToken =
   | { type: 'text'; value: string }
@@ -21,17 +28,28 @@ function escapeCssString(value: string): string {
     .replace(/\r\n|\r|\n/g, '\\A ');
 }
 
-function normalizeCommand(raw: string): ContentToken {
-  const normalized = raw.toLowerCase().replace(/\s+/g, '');
+function normalizeCommand(raw: string, docName?: string): ContentToken {
+  const keyword = raw.replace(/[{}\s]/g, '').toLowerCase();
 
-  if (normalized === 'counter(page)' || normalized === '{page}' || normalized === '{{page}}' || normalized === '{currentpage}' || normalized === '{{currentpage}}') {
+  if (keyword === 'page' || keyword === 'currentpage') {
     return { type: 'page' };
   }
-
-  if (normalized === 'counter(pages)' || normalized === '{pages}' || normalized === '{{pages}}' || normalized === '{totalpages}' || normalized === '{{totalpages}}' || normalized === '{maxpages}' || normalized === '{{maxpages}}') {
+  if (keyword === 'pages' || keyword === 'totalpages' || keyword === 'maxpages') {
     return { type: 'pages' };
   }
-
+  if (keyword === 'time') {
+    return {
+      type: 'text',
+      value: new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date()),
+    };
+  }
+  if (keyword === 'year') {
+    return { type: 'text', value: String(new Date().getFullYear()) };
+  }
+  if (keyword === 'doc_name' || keyword === 'docname') {
+    return { type: 'text', value: docName ?? '' };
+  }
+  // date / currentDate
   return {
     type: 'text',
     value: new Intl.DateTimeFormat('en-US', {
@@ -60,7 +78,7 @@ function mergeTextTokens(tokens: ContentToken[]): ContentToken[] {
   }, []);
 }
 
-export function formatMarginContent(input: string): string {
+export function formatMarginContent(input: string, docName?: string): string {
   if (!input.trim()) {
     return '""';
   }
@@ -76,7 +94,7 @@ export function formatMarginContent(input: string): string {
       tokens.push({ type: 'text', value: input.slice(cursor, start) });
     }
 
-    tokens.push(normalizeCommand(raw));
+    tokens.push(normalizeCommand(raw, docName));
     cursor = start + raw.length;
   }
 
@@ -86,14 +104,8 @@ export function formatMarginContent(input: string): string {
 
   return mergeTextTokens(tokens)
     .map((token) => {
-      if (token.type === 'page') {
-        return 'counter(page)';
-      }
-
-      if (token.type === 'pages') {
-        return 'counter(pages)';
-      }
-
+      if (token.type === 'page') return 'counter(page)';
+      if (token.type === 'pages') return 'counter(pages)';
       return `"${escapeCssString(token.value)}"`;
     })
     .join(' ');
@@ -118,12 +130,14 @@ export function buildPageRules(
   const marginMm = options.marginMm ?? 20;
   const marginFontSizePt = options.marginFontSizePt ?? 9;
   const color = settings.headerFooterColor || HEADER_FOOTER_COLOR;
-  const headerLeft = formatMarginContent(settings.headerLeft);
-  const headerCenter = formatMarginContent(settings.headerCenter);
-  const headerRight = formatMarginContent(settings.headerRight);
-  const footerLeft = formatMarginContent(settings.footerLeft);
-  const footerCenter = formatMarginContent(settings.footerCenter);
-  const footerRight = formatMarginContent(settings.footerRight);
+  const { docName } = options;
+
+  const headerLeft   = formatMarginContent(settings.headerLeft,   docName);
+  const headerCenter = formatMarginContent(settings.headerCenter, docName);
+  const headerRight  = formatMarginContent(settings.headerRight,  docName);
+  const footerLeft   = formatMarginContent(settings.footerLeft,   docName);
+  const footerCenter = formatMarginContent(settings.footerCenter, docName);
+  const footerRight  = formatMarginContent(settings.footerRight,  docName);
 
   return `
     @page {

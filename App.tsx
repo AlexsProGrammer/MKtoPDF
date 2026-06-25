@@ -427,6 +427,7 @@ const App: React.FC = () => {
           initialOrientation={orientation}
           styleSettings={styleSettings}
           imageSources={sessionImageMap}
+          docTitle={documentTitle}
         />
         <ImageManagerModal
           isOpen={isImageManagerOpen}

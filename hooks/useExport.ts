@@ -211,7 +211,7 @@ export const useExport = () => {
       const pagedStyles = `
         ${buildFontFaceRules(settings.customFonts)}
 
-        ${buildPageRules(settings, orientation, { marginMm: geometry.marginMm })}
+        ${buildPageRules(settings, orientation, { marginMm: geometry.marginMm, docName: title })}
 
         :root {
           --md-export-content-width: ${geometry.contentWidthMm}mm;
