@@ -108,6 +108,7 @@ const App: React.FC = () => {
   );
   const [documentTitle, setDocumentTitle] = useLocalStorage<string>('MD_DOC_TITLE', 'Untitled Document');
   const [isSyncScrollEnabled, setIsSyncScrollEnabled] = useLocalStorage<boolean>('MD_SYNC_SCROLL', true);
+  const [wordWrap, setWordWrap] = useLocalStorage<boolean>('MD_WORD_WRAP', false);
   const [showPageBreakLines, setShowPageBreakLines] = useState(false);
 
   // Inject custom @font-face rules into the document so custom fonts work in the live preview
@@ -600,6 +601,8 @@ const App: React.FC = () => {
                   return { ...DEFAULT_STYLE_SETTINGS, ...prev, customFonts: [...filtered, font] };
                 })
               }
+              wordWrap={wordWrap}
+              onToggleWordWrap={() => setWordWrap((v) => !v)}
             />
 
             <div className="flex-1 overflow-hidden">
@@ -607,6 +610,7 @@ const App: React.FC = () => {
                 content={markdownInput}
                 onChange={setMarkdownInput}
                 onEditorMount={setEditorView}
+                wordWrap={wordWrap}
               />
             </div>
           </div>

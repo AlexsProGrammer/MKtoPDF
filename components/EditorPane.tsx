@@ -2,8 +2,9 @@ import React from 'react';
 import { EditorProps } from '../types';
 import CodeMirror from '@uiw/react-codemirror';
 import { markdown } from '@codemirror/lang-markdown';
+import { EditorView } from '@codemirror/view';
 
-export const EditorPane: React.FC<EditorProps> = ({ content, onChange, onEditorMount }) => {
+export const EditorPane: React.FC<EditorProps> = ({ content, onChange, onEditorMount, wordWrap }) => {
   return (
     <div className="w-full h-full flex flex-col bg-white">
       {/* CodeMirror Instance */}
@@ -12,7 +13,7 @@ export const EditorPane: React.FC<EditorProps> = ({ content, onChange, onEditorM
           value={content}
           height="100%"
           className="h-full text-base"
-          extensions={[markdown()]}
+          extensions={[markdown(), ...(wordWrap ? [EditorView.lineWrapping] : [])]}
           onChange={(val) => onChange(val)}
           onCreateEditor={(view) => {
             if (onEditorMount) {

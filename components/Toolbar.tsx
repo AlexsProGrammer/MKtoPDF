@@ -8,7 +8,7 @@ import {
   AlignLeft, AlignCenter, AlignRight, AlignJustify,
   Undo2, Redo2, Table, Palette,
   Type, Superscript, Subscript, FileText,
-  Paintbrush, ChevronDown, Upload
+  Paintbrush, ChevronDown, Upload, WrapText
 } from 'lucide-react';
 import clsx from 'clsx';
 import { EditorView } from '@codemirror/view';
@@ -21,6 +21,8 @@ interface ToolbarProps {
   onOpenImageManager?: () => void;
   customFonts?: CustomFont[];
   onFontUploaded?: (font: CustomFont) => void;
+  wordWrap?: boolean;
+  onToggleWordWrap?: () => void;
 }
 
 const FONT_OPTIONS = [
@@ -60,7 +62,7 @@ const Portal: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return ReactDOM.createPortal(children, document.body);
 };
 
-export const Toolbar: React.FC<ToolbarProps> = ({ editorView, onOpenImageManager, customFonts, onFontUploaded }) => {
+export const Toolbar: React.FC<ToolbarProps> = ({ editorView, onOpenImageManager, customFonts, onFontUploaded, wordWrap, onToggleWordWrap }) => {
   // Use unique keys for dropdown management
   // null = no dropdown open
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -466,8 +468,9 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editorView, onOpenImageManager
 
         <Separator />
 
-        {/* Page Break */}
+        {/* Word Wrap / Page Break */}
         <div className="flex items-center gap-0.5 px-0.5">
+           <IconButton icon={WrapText} onClick={() => onToggleWordWrap?.()} title={wordWrap ? 'Disable Word Wrap' : 'Enable Word Wrap'} active={wordWrap} />
            <IconButton icon={FileText} onClick={insertPageBreak} title="Insert Page Break" />
         </div>
       </div>
